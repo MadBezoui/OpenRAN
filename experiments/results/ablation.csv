@@ -1,0 +1,7 @@
+Configuration,Feasible (%),P95 latency (ms)
+Full VeriXApp,100.0,82.7
+No polarization,100.0,563.1
+No exact repair,48.0,79.7
+Repair radius h=0,100.0,83.6
+Repair radius h=1,100.0,83.7
+Repair radius h=2,100.0,83.2

@@ -1,0 +1,6 @@
+Method,Verified feasible (%),VF_CI,Holm_p,Stall rate (%),Median latency (ms),P95 latency (ms)
+Uncoordinated,0.0,0.0,0.0,0.0,0.01,0.02
+Static priority,10.0,4.9,0.0,0.0,0.3,0.79
+Continuous only,74.7,7.0,1.0,25.3,40.62,159.14
+CP-SAT,100.0,0.0,0.0,0.0,5.99,10.16
+VeriXApp,100.0,0.0,0.0,25.3,41.84,159.46
