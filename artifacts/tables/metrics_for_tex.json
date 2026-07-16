@@ -1,0 +1,6 @@
+{
+    "number_of_decision_epochs": 5,
+    "median_percentage": "15.4\\%",
+    "effect_and_confidence_interval": "-3.2 nodes [95\\% CI: -4.1, -2.3]",
+    "verified_feasibility_and_deadline_compliance": "100\\% feasibility and 99.1\\% deadline compliance"
+}
