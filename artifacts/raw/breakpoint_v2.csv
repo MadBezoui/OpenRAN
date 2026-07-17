@@ -1,0 +1,201 @@
+method,n,d,c_ratio,tightness,seed,outcome,build_ms,solve_ms,total_ms,verified
+CP-SAT,30,6,2.0,0.25,42,full_solve,0.564,2.214,2.834,True
+GAC + expl repair,30,6,2.0,0.25,42,local_repair,0.96,0.656,1.828,True
+CP-SAT,30,6,2.0,0.25,43,full_solve,0.411,1.099,1.552,True
+GAC + expl repair,30,6,2.0,0.25,43,local_repair,0.876,1.198,2.254,True
+CP-SAT,30,6,2.0,0.25,44,full_solve,0.41,0.865,1.315,True
+GAC + expl repair,30,6,2.0,0.25,44,direct,1.036,0.0,1.242,True
+CP-SAT,30,6,2.0,0.25,45,full_solve,0.432,0.846,1.321,True
+GAC + expl repair,30,6,2.0,0.25,45,direct,0.833,0.0,0.98,True
+CP-SAT,30,6,2.0,0.25,46,full_solve,0.391,1.942,2.373,True
+GAC + expl repair,30,6,2.0,0.25,46,local_repair,1.122,1.568,2.785,True
+CP-SAT,30,6,2.0,0.25,47,full_solve,0.389,1.294,1.722,True
+GAC + expl repair,30,6,2.0,0.25,47,local_repair,1.044,1.064,2.203,True
+CP-SAT,30,6,2.0,0.25,48,full_solve,0.383,0.801,1.223,True
+GAC + expl repair,30,6,2.0,0.25,48,local_repair,0.801,0.941,1.838,True
+CP-SAT,30,6,2.0,0.25,49,full_solve,0.41,1.533,1.984,True
+GAC + expl repair,30,6,2.0,0.25,49,local_repair,1.137,1.282,2.52,True
+CP-SAT,30,6,2.0,0.25,50,full_solve,0.402,0.775,1.242,True
+GAC + expl repair,30,6,2.0,0.25,50,local_repair,0.905,0.656,1.655,True
+CP-SAT,30,6,2.0,0.25,51,full_solve,0.424,1.187,1.65,True
+GAC + expl repair,30,6,2.0,0.25,51,local_repair,1.346,0.635,2.073,True
+CP-SAT,30,6,2.0,0.25,52,full_solve,0.492,1.619,2.156,True
+GAC + expl repair,30,6,2.0,0.25,52,local_repair,1.118,1.057,2.275,True
+CP-SAT,30,6,2.0,0.25,53,full_solve,0.385,1.236,1.668,True
+GAC + expl repair,30,6,2.0,0.25,53,local_repair,0.94,0.915,1.943,True
+CP-SAT,30,6,2.0,0.25,54,full_solve,0.386,0.713,1.138,True
+GAC + expl repair,30,6,2.0,0.25,54,local_repair,0.917,0.566,1.575,True
+CP-SAT,30,6,2.0,0.25,55,full_solve,0.385,0.805,1.229,True
+GAC + expl repair,30,6,2.0,0.25,55,direct,0.862,0.0,0.95,True
+CP-SAT,30,6,2.0,0.25,56,full_solve,0.415,2.5,2.984,True
+GAC + expl repair,30,6,2.0,0.25,56,local_repair,1.009,3.396,4.503,True
+CP-SAT,30,6,2.0,0.25,57,full_solve,0.413,0.786,1.239,True
+GAC + expl repair,30,6,2.0,0.25,57,local_repair,1.008,0.555,1.655,True
+CP-SAT,30,6,2.0,0.25,58,full_solve,0.402,0.971,1.412,True
+GAC + expl repair,30,6,2.0,0.25,58,local_repair,1.034,0.824,1.952,True
+CP-SAT,30,6,2.0,0.25,59,full_solve,0.558,1.072,1.676,True
+GAC + expl repair,30,6,2.0,0.25,59,local_repair,0.867,0.635,1.619,True
+CP-SAT,30,6,2.0,0.25,60,full_solve,0.389,1.222,1.652,True
+GAC + expl repair,30,6,2.0,0.25,60,direct,0.859,0.0,0.965,True
+CP-SAT,30,6,2.0,0.25,61,full_solve,0.435,1.074,1.549,True
+GAC + expl repair,30,6,2.0,0.25,61,local_repair,1.012,0.925,2.023,True
+CP-SAT,100,6,2.0,0.25,42,full_solve,1.085,3.044,4.221,True
+GAC + expl repair,100,6,2.0,0.25,42,local_repair,2.6,4.471,7.467,True
+CP-SAT,100,6,2.0,0.25,43,full_solve,1.076,3.838,5.057,True
+GAC + expl repair,100,6,2.0,0.25,43,local_repair,2.573,2.214,5.15,True
+CP-SAT,100,6,2.0,0.25,44,full_solve,1.068,3.311,4.486,True
+GAC + expl repair,100,6,2.0,0.25,44,local_repair,2.92,2.128,5.427,True
+CP-SAT,100,6,2.0,0.25,45,full_solve,1.054,2.594,3.74,True
+GAC + expl repair,100,6,2.0,0.25,45,local_repair,2.41,2.17,4.943,True
+CP-SAT,100,6,2.0,0.25,46,full_solve,1.01,3.983,5.125,True
+GAC + expl repair,100,6,2.0,0.25,46,local_repair,2.885,1.482,4.76,True
+CP-SAT,100,6,2.0,0.25,47,full_solve,1.042,2.961,4.101,True
+GAC + expl repair,100,6,2.0,0.25,47,local_repair,2.55,2.689,5.59,True
+CP-SAT,100,6,2.0,0.25,48,full_solve,1.064,3.208,4.363,True
+GAC + expl repair,100,6,2.0,0.25,48,local_repair,2.973,1.55,4.863,True
+CP-SAT,100,6,2.0,0.25,49,full_solve,1.099,2.511,3.707,True
+GAC + expl repair,100,6,2.0,0.25,49,local_repair,2.646,1.358,4.377,True
+CP-SAT,100,6,2.0,0.25,50,full_solve,1.064,3.137,4.299,True
+GAC + expl repair,100,6,2.0,0.25,50,local_repair,2.721,2.043,5.144,True
+CP-SAT,100,6,2.0,0.25,51,full_solve,1.029,1.628,2.748,True
+GAC + expl repair,100,6,2.0,0.25,51,local_repair,2.482,1.404,11.372,True
+CP-SAT,100,6,2.0,0.25,52,full_solve,1.089,2.598,3.786,True
+GAC + expl repair,100,6,2.0,0.25,52,local_repair,2.687,1.346,4.379,True
+CP-SAT,100,6,2.0,0.25,53,full_solve,1.069,4.274,5.443,True
+GAC + expl repair,100,6,2.0,0.25,53,local_repair,2.605,3.158,6.138,True
+CP-SAT,100,6,2.0,0.25,54,full_solve,1.065,2.475,3.637,True
+GAC + expl repair,100,6,2.0,0.25,54,local_repair,2.481,1.302,4.277,True
+CP-SAT,100,6,2.0,0.25,55,full_solve,1.026,3.909,5.023,True
+GAC + expl repair,100,6,2.0,0.25,55,local_repair,2.765,2.728,5.84,True
+CP-SAT,100,6,2.0,0.25,56,full_solve,1.087,3.717,4.897,True
+GAC + expl repair,100,6,2.0,0.25,56,local_repair,3.193,1.869,5.4,True
+CP-SAT,100,6,2.0,0.25,57,full_solve,1.044,2.745,3.888,True
+GAC + expl repair,100,6,2.0,0.25,57,local_repair,2.5,1.366,4.212,True
+CP-SAT,100,6,2.0,0.25,58,full_solve,0.985,2.397,3.467,True
+GAC + expl repair,100,6,2.0,0.25,58,local_repair,2.662,1.041,4.048,True
+CP-SAT,100,6,2.0,0.25,59,full_solve,1.082,2.446,3.624,True
+GAC + expl repair,100,6,2.0,0.25,59,local_repair,2.637,1.862,4.849,True
+CP-SAT,100,6,2.0,0.25,60,full_solve,1.021,3.891,5.019,True
+GAC + expl repair,100,6,2.0,0.25,60,local_repair,2.994,2.021,5.398,True
+CP-SAT,100,6,2.0,0.25,61,full_solve,1.074,2.762,3.923,True
+GAC + expl repair,100,6,2.0,0.25,61,local_repair,2.739,1.557,4.667,True
+CP-SAT,300,6,2.0,0.25,42,full_solve,2.873,7.988,11.202,True
+GAC + expl repair,300,6,2.0,0.25,42,local_repair,8.337,3.362,13.286,True
+CP-SAT,300,6,2.0,0.25,43,full_solve,2.752,7.922,10.95,True
+GAC + expl repair,300,6,2.0,0.25,43,local_repair,8.227,4.59,13.943,True
+CP-SAT,300,6,2.0,0.25,44,full_solve,2.973,8.597,11.803,True
+GAC + expl repair,300,6,2.0,0.25,44,local_repair,8.726,5.024,22.83,True
+CP-SAT,300,6,2.0,0.25,45,full_solve,3.147,9.117,12.551,True
+GAC + expl repair,300,6,2.0,0.25,45,local_repair,8.548,6.414,16.251,True
+CP-SAT,300,6,2.0,0.25,46,full_solve,2.786,9.815,12.845,True
+GAC + expl repair,300,6,2.0,0.25,46,local_repair,8.909,6.553,16.539,True
+CP-SAT,300,6,2.0,0.25,47,full_solve,2.792,7.628,10.681,True
+GAC + expl repair,300,6,2.0,0.25,47,local_repair,7.983,5.116,14.068,True
+CP-SAT,300,6,2.0,0.25,48,full_solve,2.848,8.436,11.519,True
+GAC + expl repair,300,6,2.0,0.25,48,local_repair,7.96,4.427,13.364,True
+CP-SAT,300,6,2.0,0.25,49,full_solve,2.941,10.478,13.673,True
+GAC + expl repair,300,6,2.0,0.25,49,local_repair,8.641,45.831,55.526,True
+CP-SAT,300,6,2.0,0.25,50,full_solve,3.12,9.561,12.922,True
+GAC + expl repair,300,6,2.0,0.25,50,local_repair,8.228,5.383,14.557,True
+CP-SAT,300,6,2.0,0.25,51,full_solve,2.748,8.794,11.768,True
+GAC + expl repair,300,6,2.0,0.25,51,local_repair,8.111,6.93,16.17,True
+CP-SAT,300,6,2.0,0.25,52,full_solve,2.938,10.811,13.989,True
+GAC + expl repair,300,6,2.0,0.25,52,local_repair,9.145,11.353,21.621,True
+CP-SAT,300,6,2.0,0.25,53,full_solve,2.85,8.122,11.226,True
+GAC + expl repair,300,6,2.0,0.25,53,local_repair,8.185,5.736,14.888,True
+CP-SAT,300,6,2.0,0.25,54,full_solve,3.263,8.701,12.217,True
+GAC + expl repair,300,6,2.0,0.25,54,local_repair,10.385,9.163,20.522,True
+CP-SAT,300,6,2.0,0.25,55,full_solve,3.09,8.915,12.261,True
+GAC + expl repair,300,6,2.0,0.25,55,local_repair,8.242,11.657,20.994,True
+CP-SAT,300,6,2.0,0.25,56,full_solve,2.782,7.837,10.856,True
+GAC + expl repair,300,6,2.0,0.25,56,local_repair,8.454,3.273,12.662,True
+CP-SAT,300,6,2.0,0.25,57,full_solve,2.802,8.941,12.001,True
+GAC + expl repair,300,6,2.0,0.25,57,local_repair,8.687,5.289,14.947,True
+CP-SAT,300,6,2.0,0.25,58,full_solve,3.007,10.905,14.151,True
+GAC + expl repair,300,6,2.0,0.25,58,local_repair,8.99,25.173,35.272,True
+CP-SAT,300,6,2.0,0.25,59,full_solve,2.814,7.086,10.133,True
+GAC + expl repair,300,6,2.0,0.25,59,local_repair,8.199,4.201,13.36,True
+CP-SAT,300,6,2.0,0.25,60,full_solve,2.93,8.762,11.979,True
+GAC + expl repair,300,6,2.0,0.25,60,local_repair,8.74,6.802,16.634,True
+CP-SAT,300,6,2.0,0.25,61,full_solve,3.098,8.169,11.56,True
+GAC + expl repair,300,6,2.0,0.25,61,local_repair,7.918,6.886,15.726,True
+CP-SAT,600,6,2.0,0.25,42,full_solve,5.555,16.599,22.649,True
+GAC + expl repair,600,6,2.0,0.25,42,local_repair,17.012,23.836,43.58,True
+CP-SAT,600,6,2.0,0.25,43,full_solve,5.659,18.834,25.02,True
+GAC + expl repair,600,6,2.0,0.25,43,local_repair,18.08,10.631,31.189,True
+CP-SAT,600,6,2.0,0.25,44,full_solve,5.498,17.84,23.824,True
+GAC + expl repair,600,6,2.0,0.25,44,local_repair,17.451,9.554,29.482,True
+CP-SAT,600,6,2.0,0.25,45,full_solve,5.281,16.593,22.38,True
+GAC + expl repair,600,6,2.0,0.25,45,local_repair,16.652,22.061,48.868,True
+CP-SAT,600,6,2.0,0.25,46,full_solve,5.419,15.461,21.362,True
+GAC + expl repair,600,6,2.0,0.25,46,local_repair,17.238,8.706,28.206,True
+CP-SAT,600,6,2.0,0.25,47,full_solve,5.42,16.248,22.149,True
+GAC + expl repair,600,6,2.0,0.25,47,local_repair,27.147,9.758,38.941,True
+CP-SAT,600,6,2.0,0.25,48,full_solve,5.191,17.905,23.633,True
+GAC + expl repair,600,6,2.0,0.25,48,local_repair,16.021,27.641,46.19,True
+CP-SAT,600,6,2.0,0.25,49,full_solve,5.259,17.064,22.835,True
+GAC + expl repair,600,6,2.0,0.25,49,local_repair,16.747,46.394,65.329,True
+CP-SAT,600,6,2.0,0.25,50,full_solve,5.328,18.818,24.645,True
+GAC + expl repair,600,6,2.0,0.25,50,local_repair,17.619,11.82,31.697,True
+CP-SAT,600,6,2.0,0.25,51,full_solve,5.293,17.601,23.375,True
+GAC + expl repair,600,6,2.0,0.25,51,local_repair,16.23,13.125,40.817,True
+CP-SAT,600,6,2.0,0.25,52,full_solve,5.213,18.955,24.661,True
+GAC + expl repair,600,6,2.0,0.25,52,local_repair,17.201,33.687,53.661,True
+CP-SAT,600,6,2.0,0.25,53,full_solve,5.272,17.658,23.447,True
+GAC + expl repair,600,6,2.0,0.25,53,local_repair,16.641,16.55,44.041,True
+CP-SAT,600,6,2.0,0.25,54,full_solve,5.212,16.748,22.447,True
+GAC + expl repair,600,6,2.0,0.25,54,local_repair,16.478,26.287,44.801,True
+CP-SAT,600,6,2.0,0.25,55,full_solve,5.309,17.222,23.047,True
+GAC + expl repair,600,6,2.0,0.25,55,local_repair,16.583,10.562,36.788,True
+CP-SAT,600,6,2.0,0.25,56,full_solve,5.347,19.358,25.201,True
+GAC + expl repair,600,6,2.0,0.25,56,local_repair,17.828,14.638,34.679,True
+CP-SAT,600,6,2.0,0.25,57,full_solve,5.17,17.444,23.049,True
+GAC + expl repair,600,6,2.0,0.25,57,local_repair,16.247,27.727,46.217,True
+CP-SAT,600,6,2.0,0.25,58,full_solve,5.235,15.761,21.455,True
+GAC + expl repair,600,6,2.0,0.25,58,local_repair,16.361,16.352,34.734,True
+CP-SAT,600,6,2.0,0.25,59,full_solve,5.697,15.931,22.085,True
+GAC + expl repair,600,6,2.0,0.25,59,local_repair,18.035,12.969,33.088,True
+CP-SAT,600,6,2.0,0.25,60,full_solve,5.223,13.059,18.76,True
+GAC + expl repair,600,6,2.0,0.25,60,local_repair,15.932,11.556,29.729,True
+CP-SAT,600,6,2.0,0.25,61,full_solve,5.162,14.035,19.631,True
+GAC + expl repair,600,6,2.0,0.25,61,local_repair,17.182,6.686,26.021,True
+CP-SAT,1000,6,2.0,0.25,42,full_solve,9.19,29.565,39.641,True
+GAC + expl repair,1000,6,2.0,0.25,42,local_repair,28.384,44.148,87.025,True
+CP-SAT,1000,6,2.0,0.25,43,full_solve,9.049,27.99,37.954,True
+GAC + expl repair,1000,6,2.0,0.25,43,local_repair,27.799,56.376,88.668,True
+CP-SAT,1000,6,2.0,0.25,44,full_solve,8.707,25.886,35.617,True
+GAC + expl repair,1000,6,2.0,0.25,44,local_repair,28.181,36.037,68.583,True
+CP-SAT,1000,6,2.0,0.25,45,full_solve,8.666,26.084,35.566,True
+GAC + expl repair,1000,6,2.0,0.25,45,local_repair,27.269,23.306,54.404,True
+CP-SAT,1000,6,2.0,0.25,46,full_solve,8.899,26.139,35.985,True
+GAC + expl repair,1000,6,2.0,0.25,46,local_repair,28.356,11.994,43.898,True
+CP-SAT,1000,6,2.0,0.25,47,full_solve,9.195,29.516,39.617,True
+GAC + expl repair,1000,6,2.0,0.25,47,local_repair,27.663,32.33,72.019,True
+CP-SAT,1000,6,2.0,0.25,48,full_solve,9.272,28.135,38.377,True
+GAC + expl repair,1000,6,2.0,0.25,48,local_repair,38.419,25.839,68.371,True
+CP-SAT,1000,6,2.0,0.25,49,full_solve,8.979,24.681,34.552,True
+GAC + expl repair,1000,6,2.0,0.25,49,local_repair,26.284,13.236,44.125,True
+CP-SAT,1000,6,2.0,0.25,50,full_solve,8.82,26.179,36.066,True
+GAC + expl repair,1000,6,2.0,0.25,50,local_repair,27.326,13.919,45.734,True
+CP-SAT,1000,6,2.0,0.25,51,full_solve,8.866,26.26,35.99,True
+GAC + expl repair,1000,6,2.0,0.25,51,local_repair,27.584,13.475,45.187,True
+CP-SAT,1000,6,2.0,0.25,52,full_solve,8.738,26.161,35.819,True
+GAC + expl repair,1000,6,2.0,0.25,52,local_repair,28.459,37.425,70.216,True
+CP-SAT,1000,6,2.0,0.25,53,full_solve,9.182,28.584,38.722,True
+GAC + expl repair,1000,6,2.0,0.25,53,local_repair,27.591,39.326,71.382,True
+CP-SAT,1000,6,2.0,0.25,54,full_solve,9.297,33.459,43.622,True
+GAC + expl repair,1000,6,2.0,0.25,54,local_repair,29.228,40.384,83.645,True
+CP-SAT,1000,6,2.0,0.25,55,full_solve,10.058,31.81,42.667,True
+GAC + expl repair,1000,6,2.0,0.25,55,local_repair,29.672,29.522,71.989,True
+CP-SAT,1000,6,2.0,0.25,56,full_solve,9.035,31.532,41.504,True
+GAC + expl repair,1000,6,2.0,0.25,56,local_repair,29.608,23.419,57.156,True
+CP-SAT,1000,6,2.0,0.25,57,full_solve,9.039,32.912,42.907,True
+GAC + expl repair,1000,6,2.0,0.25,57,local_repair,30.421,40.625,75.653,True
+CP-SAT,1000,6,2.0,0.25,58,full_solve,8.891,28.818,38.581,True
+GAC + expl repair,1000,6,2.0,0.25,58,local_repair,27.723,28.811,60.629,True
+CP-SAT,1000,6,2.0,0.25,59,full_solve,9.206,27.329,37.31,True
+GAC + expl repair,1000,6,2.0,0.25,59,local_repair,28.179,13.885,46.064,True
+CP-SAT,1000,6,2.0,0.25,60,full_solve,9.163,29.085,39.106,True
+GAC + expl repair,1000,6,2.0,0.25,60,local_repair,28.973,65.669,106.911,True
+CP-SAT,1000,6,2.0,0.25,61,full_solve,8.738,25.823,35.417,True
+GAC + expl repair,1000,6,2.0,0.25,61,local_repair,27.945,16.452,56.676,True

@@ -1,0 +1,26 @@
+{
+  "campaigns": [
+    "breakpoint (cold-start frontier)",
+    "dynamic_scale (amortized)",
+    "literature_baselines",
+    "verifier_validation",
+    "stats_paired"
+  ],
+  "timestamp": "2026-07-16",
+  "python": "3.10.12",
+  "ortools": "9.15.6755",
+  "numpy": "2.2.6",
+  "pandas": "2.3.3",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+  "cpu_count": 2,
+  "note": "Secondary environment: Linux container, 2 vCPU. All paired comparisons within-environment. Latencies not comparable across manifests.",
+  "seeds": {
+    "breakpoint": "42..46",
+    "dynamic_scale": "42..44",
+    "literature_baselines": "42..91",
+    "verifier_validation": 20260716
+  },
+  "cpsat": {
+    "num_search_workers": 1
+  }
+}

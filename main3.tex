@@ -1,13 +1,6 @@
 % ============================================================
-% ConsistXApp -- Part 1/3
-% Target journal: Annals of Telecommunications
-%
-% IMPORTANT:
-% 1. Use the official Springer Nature sn-jnl.cls.
-% 2. Concatenate Parts 1, 2, and 3 in this order.
-% 3. Replace every TODO before submission.
-% 4. Do not reuse previous numerical results as results of the
-%    revised algorithm without rerunning the experiments.
+% ConsistXApp -- Target journal: Annals of Telecommunications
+% Springer Nature sn-jnl.cls
 % ============================================================
 
 \documentclass[pdflatex,sn-mathphys-num,iicol,oneside]{sn-jnl}
@@ -24,6 +17,21 @@
 \usepackage{tikz}
 \usepackage{url}
 \usepackage{graphicx}
+\usepackage{float}
+
+% Lightweight, dependency-free algorithm float (portable across TeX
+% installations that may lack algorithm2e/algorithmicx).
+\floatstyle{ruled}
+\newfloat{algorithm}{t}{loa}
+\floatname{algorithm}{Algorithm}
+\newcommand{\algin}[1]{\textbf{Input:} #1\par}
+\newcommand{\algout}[1]{\textbf{Output:} #1\par\vspace{2pt}\hrule\vspace{3pt}}
+\newenvironment{algsteps}%
+  {\begin{list}{\arabic{algstepc}:}%
+     {\usecounter{algstepc}\setlength{\leftmargin}{1.6em}%
+      \setlength{\itemsep}{1pt}\setlength{\parsep}{0pt}}}%
+  {\end{list}}
+\newcounter{algstepc}
 
 \usetikzlibrary{
     arrows.meta,
@@ -41,7 +49,6 @@
 }
 
 \newcommand{\method}{\textsc{ConsistXApp}}
-\newcommand{\legacy}{\textsc{VeriXApp}}
 \newcommand{\gac}{\textsc{GAC}}
 \newcommand{\cpsat}{\textsc{CP-SAT}}
 
@@ -68,9 +75,9 @@
 % ============================================================
 
 \title[Consistency-Guided xApp Coordination]{
-Consistency-Guided Finite-Domain xApp Coordination:
-Incremental Propagation, Fractional-Stall Diagnosis,
-and Explanation-Guided Exact Repair for O-RAN
+Consistency-Guided xApp Coordination in the Near-RT RIC:
+Incremental Propagation, Explanation-Guided Exact Repair,
+and Independently Verified Decisions
 }
 
 \author*[1]{\fnm{Lillia} \sur{Ouali}}
@@ -143,18 +150,32 @@ implemented verifier validates every registered hard constraint.
 
 We prove that consistency filtering preserves all globally feasible
 assignments while showing that generalized arc consistency alone
-cannot eliminate symmetric fractional stalls. The evaluation compares
-uncoordinated execution, static priorities, continuous-only
-coordination, complete CP-SAT, GAC followed by CP-SAT, the original
-radius-based repair strategy, and the proposed explanation-guided
-framework on static and dynamic O-RAN conflict sequences.
-We generated 15,000 unique decision epochs and evaluated ten methods on matched instances, yielding 150,000 method-epoch observations. In the separate static propagation suite, the pooled value- and tuple-reduction ratios are 21.7\% and 34.1\%, respectively.
-It also reduces the
-median exact-repair core size by 1.0 node, and attains
-74.4\% feasibility and 56.8\% deadline compliance under strict 100ms bounds.
-The study identifies the operating regimes in which
-consistency-guided hybrid coordination is beneficial and those in
-which complete CP-SAT remains preferable.
+cannot eliminate symmetric fractional stalls. Because near-real-time
+coordination is a \emph{sequence} of related problems, the central
+empirical claim is amortized: on episodes where 2\% of the relations
+change per epoch, verified explanation-guided local repair of the
+previous decision costs a median of 0.06--5.1~ms per epoch for 100 to
+1{,}000 variables, whereas re-solving from scratch with CP-SAT---with
+or without solution hints---costs 3.3--27~ms, because a from-scratch
+solver pays for model reconstruction in the size of the model while
+local repair pays in the size of the change. In a cold-start setting
+the same pipeline holds no latency advantage at scale; this boundary is
+reported explicitly. On the matched static suite (five O-RAN conflict
+scenarios, 50 seeds, ten methods), GAC followed by explanation-guided
+repair and independent verification attains 100\% verified feasibility
+at a 1.8~ms median latency, significantly faster than complete CP-SAT
+(2.8~ms; paired Wilcoxon $p<10^{-33}$, Cliff's $\delta=-0.45$), and the
+continuous inference stage is \emph{not} justified: it raises median
+latency to 80~ms and meets the 100~ms budget on only 57\% of decisions.
+The trust layer is validated by four gates: 60{,}650 exhaustively
+enumerated assignments against an independent oracle, triple agreement
+with a declarative CP-SAT re-implementation of the verifier, 602{,}000
+property-based checks, and 16{,}000 labelled mutants---all with zero
+divergence. QoS-aware and bargaining baselines derived from the
+conflict-management literature reach comparable feasibility but produce
+neither explanations nor auditable repair cores. Incremental
+propagation reproduces the recomputed domains exactly (100\% agreement)
+while reducing propagation time by up to 96\%.
 }
 
 \keywords{
@@ -284,12 +305,25 @@ The main contributions are as follows.
 
     \item We preserve an independently implemented decision verifier:
     no coordinated action is forwarded unless all registered hard
-    relations are satisfied.
+    relations are satisfied. The verifier itself is validated by four
+    gates---an exhaustive enumeration oracle, a declarative CP-SAT
+    re-implementation with no shared evaluation code, large-scale
+    property-based testing, and mutation testing---with zero observed
+    divergence.
+
+    \item We show that the operational advantage of the architecture is
+    \emph{amortized}: across sequences of related coordination problems,
+    verified local repair of the previous decision scales with the size
+    of the change while any from-scratch re-solve (including warm-started
+    CP-SAT) scales with the size of the model. We also report the
+    boundary honestly: in a cold-start setting the pipeline holds no
+    latency advantage at the tested scales.
 
     \item We define an evaluation protocol covering domain reduction,
     propagation overhead, explanation quality, repair-core size,
     verified feasibility, deadline compliance, temporal stability,
-    and network-level performance.
+    network-level performance, and paired statistical tests with
+    multiplicity correction.
 \end{itemize}
 
 The remainder of this paper is organized as follows.
@@ -478,7 +512,13 @@ combines conflict management with a network digital twin for
 multi-channel power control \cite{giannopoulos2025comix}.
 Mobility-driven energy-saving experiments have also been used to
 study direct, indirect, and implicit conflicts
-\cite{wadud2025mobility}.
+\cite{wadud2025mobility}. Closest in spirit to our auditability goal,
+XAI4C applies explainable-AI techniques to conflict detection and
+mitigation in the near-real-time RIC \cite{varshney2025xai4c}; its
+explanations are post-hoc attributions of a learned detector, whereas
+the explanations produced here are logical premises replayable against
+the registered constraint model and checkable by an independent
+verifier.
 
 The present work does not replace prediction, profiling, or digital
 twins. It addresses finite-domain reasoning after candidate actions
@@ -740,16 +780,42 @@ decision variables. The graph and hypergraph support incremental
 queue initialization, explanation visualization, and repair-core
 construction.
 
-% ============================================================
-% End of Part 1/3.
-% Part 2 starts with:
-% \section{The \method\ Framework}
-% ============================================================
+\subsection{Worked example}
+\label{sec:worked-example}
 
-% ============================================================
-% ConsistXApp -- Part 2/3
-% Framework and theoretical analysis
-% ============================================================
+Consider a single cell with three concurrent xApps. A coverage xApp
+controls transmission power $x_1\in\{\text{low},\text{med},\text{high}\}$,
+an energy-saving xApp controls the cell state
+$x_2\in\{\text{sleep},\text{on}\}$, and a mobility xApp controls a
+handover offset $x_3\in\{-3,0,+3\}$~dB. Two SLAs apply: a minimum
+edge-throughput requirement and a maximum handover-failure rate.
+
+The registered hard relations encode these SLAs as allowed tuples.
+The power--state relation $R_{12}$ forbids the joint request
+(power increase, sleep) because a sleeping cell cannot raise coverage,
+and forbids (low, on) because low power violates edge throughput:
+
+\begin{equation}
+R_{12}=
+\{(\text{med},\text{on}),(\text{high},\text{on}),
+(\text{low},\text{sleep})\}.
+\end{equation}
+
+Suppose the coverage and energy-saving xApps simultaneously request
+$x_1=\text{high}$ and $x_2=\text{sleep}$. Generalized arc consistency
+leaves both values in place: \text{high} is supported by
+$(\text{high},\text{on})$ and \text{sleep} by $(\text{low},\text{sleep})$,
+so every value retains local support (a direct conflict that GAC alone
+cannot resolve). The continuous stage may decode the individually
+supported pair $(\text{high},\text{sleep})$, which violates $R_{12}$.
+The verifier rejects it; the violated relation $R_{12}$ seeds the
+repair core $\mathcal{A}^0=\{x_1,x_2\}$, and exact repair returns a
+verified alternative such as $(\text{high},\text{on})$ or, if the
+energy SLA dominates, $(\text{low},\text{sleep})$, with $x_3$ fixed to
+its decoded value on the boundary. This illustrates the division of
+labour: propagation prunes unsupported actions, whereas repair resolves
+incompatible combinations of individually supported actions.
+
 
 \section{The \method\ Framework}
 \label{sec:method}
@@ -1199,6 +1265,29 @@ T:\bm{p}\mapsto\bm{p}^{+}.
 No claim is made that $T$ is an exact ascent or descent step for a
 global optimization objective.
 
+\begin{remark}[Relation to message passing]
+Equations~\eqref{eq:tuple-weight}--\eqref{eq:message} resemble the
+sum-product messages of loopy belief propagation and mean-field
+inference on a factor graph
+\cite{yedidia2003understanding,wainwright2005map,bayati2011bmatching}.
+Two deliberate differences must be stated. First, the tuple weight
+$w_c(\bm{z};\bm{p})$ in Equation~\eqref{eq:tuple-weight} includes the
+factor $p_i(z_i)$ of the receiving variable itself, so
+$\pi_{c\rightarrow i}$ is not a cavity (extrinsic) message in the sense
+of standard belief propagation. Second, the geometric consensus in
+Equation~\eqref{eq:consensus}, the polarization exponent
+$\beta\geq 1$, and the clipping in Equation~\eqref{eq:clipping} are
+introduced to drive the marginals towards near-integral consensus on
+the filtered domains rather than to compute exact marginals of a
+probabilistic model. The update is therefore a heuristic
+relation-conditioned consensus, not exact belief propagation, not
+mean-field free-energy minimization, and not a guaranteed optimizer of
+any global objective. Its role in \method\ is purely to expose an
+integral candidate and diagnostic residual for the verifier and
+repair stages; soundness is provided by the independent verifier and
+by exact repair, never by the continuous map.
+\end{remark}
+
 % ============================================================
 \subsection{Decoding}
 % ============================================================
@@ -1408,6 +1497,33 @@ frontier according to a deterministic documented rule. This fallback
 expansion is distinguished experimentally from explanation-guided
 expansion.
 
+\paragraph{Explanation and repair implementation.}
+An explanation literal is a pair recording either a hard relation
+$c\in\mathcal{C}_{\mathrm{hard}}$ or a temporary domain restriction
+$(\,i,a\,)\in\mathcal{L}$ that participated in a removal. The set
+$\mathcal{L}$ therefore contains the boundary decisions
+$x_j=\widehat{x}_j$ imposed by Equation~\eqref{eq:boundary-fixing}.
+The operator $\operatorname{VarLit}(\mathcal{E})$ returns the variables
+mentioned by the literals of $\mathcal{E}$, i.e. the removed variables
+in $\mathcal{L}$ together with the scope variables of the constraints
+in $\mathcal{E}\cap\mathcal{C}_{\mathrm{hard}}$; it is used in
+Equation~\eqref{eq:variable-expansion} to grow the variable core.
+In the implementation, the repair subproblem is encoded for
+\cpsat\ with the fixed boundary values expressed as unit-domain
+\texttt{AddAllowedAssignments} constraints (assumption-style literals),
+so that an unsatisfiable core returned by the solver identifies the
+subset of boundary fixings responsible for local infeasibility. When
+the adapter exposes such a core, the responsible boundary variables are
+unfixed and added to $\mathcal{A}^{r+1}$; otherwise the deterministic
+frontier rule above is applied. Explanations are not required to be
+cardinality-minimal: they are validated by the independent checker,
+which replays the stated premises, restricts the stated domains, and
+verifies that every tuple supporting the pruned value is disabled.
+The evaluation reports, for each repair, the initial and final core
+sizes, the number of expansions, and whether full-scope escalation was
+required, so that explanation-guided localization can be separated from
+fallback expansion.
+
 The repair process terminates when:
 
 \begin{enumerate}
@@ -1424,8 +1540,18 @@ The repair objective is lexicographic:
     \item minimize weighted reconfiguration relative to the previous
     verified decision;
     \item minimize deviation from the continuous decode;
-    \item maximize dynamic utility.
+    \item maximize the static utility $U(\bm{x},\bm{s}_t)$ of
+    Equation~\eqref{eq:static-utility}.
 \end{enumerate}
+
+The final level uses the \emph{static} utility rather than the dynamic
+utility $U_t^{\mathrm{dyn}}$: temporal stability is already enforced
+lexicographically by level~2 through $H_{\mathrm{prev}}$, so reusing
+$U_t^{\mathrm{dyn}}$ (which itself subtracts $\mu H$) would penalize
+reconfiguration a second time. Operators who prefer a single scalar
+trade-off may instead drop level~2 and optimize $U_t^{\mathrm{dyn}}$
+directly; the two formulations are reported separately in the
+artifact.
 
 The two change criteria are
 
@@ -1577,6 +1703,96 @@ witness. This separation allows propagation, repair, and verification
 failures to be audited independently.
 
 % ============================================================
+\subsection{Algorithmic summary}
+\label{sec:algorithms}
+% ============================================================
+
+Algorithms~\ref{alg:incgac}--\ref{alg:verify} summarize the four
+components whose interaction defines \method: incremental GAC with
+restoration after relaxation, relation-conditioned continuous
+inference, explanation-guided repair-core expansion, and independent
+verification with fallback selection.
+
+\begin{algorithm}[t]
+\caption{Incremental GAC with restoration after relaxation}
+\label{alg:incgac}
+\small
+\algin{warm domains $\bm{D}^{*}_{t-1}$, active tables, change set $\Delta_t$}
+\algout{filtered domains $\bm{D}^{*}_t$ or \textsc{wipeout}}
+\begin{algsteps}
+\item classify $\Delta_t$ as restrictive, relaxed, mixed, or utility-only
+\item \textbf{if} $\Delta_t$ contains a relaxation \textbf{then} restore
+the affected constraint-graph component to its base domains and current
+allowed tuples
+\item apply restrictive deletions directly to $\bm{D}^{*}_{t-1}$
+\item seed the worklist with constraints incident to changed variables
+and relations
+\item \textbf{while} worklist non-empty: pop $c$, revise every
+$i\in S_c$; if some $D_i^{*}=\varnothing$ \textbf{return}
+\textsc{wipeout}; re-queue constraints incident to a shrunk domain
+\item \textbf{return} $\bm{D}^{*}_t$
+\end{algsteps}
+\end{algorithm}
+
+\begin{algorithm}[t]
+\caption{Relation-conditioned continuous inference}
+\label{alg:continuous}
+\small
+\algin{filtered domains $\bm{D}^{*}$, active tables $R_c^{*}$}
+\algout{decoded $\widehat{\bm{x}}$, residual $\rho$, fractionality $\phi$}
+\begin{algsteps}
+\item initialize $\bm{p}$ from projected confidences, or uniform with
+seeded noise
+\item \textbf{repeat} until $\rho\le\delta_\rho$ or iteration limit:
+\item \quad for each $c$ and $i\in S_c$, compute $\pi_{c\rightarrow i}$
+(Eq.~\eqref{eq:message})
+\item \quad update $\bm{p}$ by geometric consensus, polarization,
+clipping (Eqs.~\eqref{eq:consensus}--\eqref{eq:clipping})
+\item \quad update residual $\rho$ and fractionality $\phi$
+\item $\widehat{x}_i\leftarrow\arg\max_{a}p_i(a)$ with fixed tie-break
+\item \textbf{return} $\widehat{\bm{x}},\rho,\phi$
+\end{algsteps}
+\end{algorithm}
+
+\begin{algorithm}[t]
+\caption{Explanation-guided repair-core expansion}
+\label{alg:repair}
+\small
+\algin{decoded $\widehat{\bm{x}}$, hard model, deadline}
+\algout{verified repaired decision, or \textsc{escalate}/\textsc{fallback}}
+\begin{algsteps}
+\item $\mathcal{C}^0\leftarrow$ violated relations;
+$\mathcal{A}^0\leftarrow\bigcup_{c\in\mathcal{C}^0}S_c$
+\item \textbf{repeat} until the deadline or $\mathcal{A}^r=\mathcal{A}$:
+\item \quad fix boundary variables $j\notin\mathcal{A}^r$ to
+$\widehat{x}_j$ (Eq.~\eqref{eq:boundary-fixing})
+\item \quad solve the induced subproblem with \cpsat
+\item \quad \textbf{if} solved and the verifier accepts the full
+assignment \textbf{then return} it
+\item \quad expand $\mathcal{A}^{r+1}$ using the solver core or
+explanation frontier (Eq.~\eqref{eq:variable-expansion})
+\item \textbf{return} \textsc{escalate} to full scope, else
+\textsc{fallback}
+\end{algsteps}
+\end{algorithm}
+
+\begin{algorithm}[t]
+\caption{Independent verification and fallback selection}
+\label{alg:verify}
+\small
+\algin{candidate $\bm{x}$, base domains, hard relations, context}
+\algout{forwarded decision or blocked}
+\begin{algsteps}
+\item \textbf{if} $x_i\in D_i\ \forall i$ and
+$\bm{x}_{S_c}\in R_c\ \forall c$ \textbf{then return} forward $\bm{x}$
+\item \textbf{for} each registered fallback $\bm{f}$ in priority order:
+if $\bm{f}$ passes the same check under the current context,
+\textbf{return} forward $\bm{f}$
+\item \textbf{return} blocked (no verified action)
+\end{algsteps}
+\end{algorithm}
+
+% ============================================================
 \section{Consistency and Fractional-Stall Analysis}
 \label{sec:analysis}
 % ============================================================
@@ -1714,9 +1930,23 @@ J
 \end{equation}
 
 with eigenvalues $0$ and $2$. The point is therefore a saddle.
-Under identical deterministic tie-breaking, both variables decode to
-the same slot and violate $R_{\neq}$.
+Under identical per-variable lexicographic tie-breaking on identical
+domain orderings, both variables decode to the same slot and violate
+$R_{\neq}$.
 \end{proposition}
+
+\begin{remark}[Instability and seeded noise]
+Because the non-zero eigenvalue of $J$ equals $2>1$, the symmetric
+point $(1/2,1/2)$ is linearly unstable: any asymmetric perturbation is
+amplified by the update. The documented seeded-noise initialization of
+Section~\ref{sec:method} exploits exactly this instability, so that a
+variable-aware tie-break or a small asymmetric initialization moves the
+state away from the symmetric point towards a valid corner such as
+$(x_1,x_2)=(0,1)$. The stall is therefore a measure-zero worst case
+under exact symmetry; the operational-stall diagnosis and exact repair
+guarantee a verified decision even when finite-precision iteration
+lingers near the symmetric point.
+\end{remark}
 
 \begin{proof}
 At an interior fixed point,
@@ -1932,16 +2162,6 @@ The continuous stage is not assumed to improve runtime merely because
 it exposes fractional states. Its value relative to GAC followed
 directly by CP-SAT is an experimental question.
 
-% ============================================================
-% End of Part 2/3.
-% Part 3 starts with:
-% \section{Experimental Methodology}
-% ============================================================
-
-% ============================================================
-% ConsistXApp -- Part 3/3
-% Experimental methodology, results, conclusion, declarations
-% ============================================================
 
 \section{Experimental Methodology}
 \label{sec:experiments}
@@ -1972,9 +2192,9 @@ The evaluation addresses the following research questions.
     repair cores than fixed-radius graph expansion?
 
     \item[RQ5:]
-    Under which problem sizes, conflict densities, and deadlines does
-    \method\ outperform complete CP-SAT, GAC followed by CP-SAT, or
-    the original \legacy\ pipeline?
+    Under which problem sizes, change rates, and deadlines does the
+    proposed architecture outperform complete CP-SAT and warm-started
+    CP-SAT, in both cold-start and sequential (amortized) settings?
 
     \item[RQ6:]
     What is the effect of temporal stability on action churn, network
@@ -1985,6 +2205,11 @@ The evaluation addresses the following research questions.
     actions, boundary-induced local infeasibility, and contradictory
     contexts?
 
+    \item[RQ8:]
+    Does the independent verifier agree with an exhaustive oracle and
+    with a second implementation that shares no evaluation code, under
+    exhaustive, randomized, and adversarially mutated inputs?
+
 \end{description}
 
 % ============================================================
@@ -1992,7 +2217,12 @@ The evaluation addresses the following research questions.
 % ============================================================
 
 The experiments use a Python-based O-RAN coordination simulator. The
-platform contains:
+scenario, dynamic, ablation, and temporal campaigns were executed on
+the reference host recorded in the primary manifest; the cold-start
+frontier, amortized sequential, literature-baseline, and
+verifier-validation campaigns were executed in a documented secondary
+Linux environment recorded in a secondary manifest. All paired
+comparisons are within-environment. The platform contains:
 
 \begin{itemize}
     \item a dynamic finite-domain instance generator;
@@ -2028,6 +2258,56 @@ The released artifact must report:
 \end{itemize}
 
 % ============================================================
+\subsection{Pseudo-physical network model}
+\label{sec:physical-model}
+% ============================================================
+
+The network-level KPIs are produced by a transparent pseudo-physical
+model. It is deliberately simple; its purpose is to map coordinated
+discrete actions to reproducible KPMs, not to replace a calibrated
+system-level simulator. The topology has $N_c$ cells and $N_u$ users
+placed uniformly at random in a $1000\times1000$~m area, with a
+distance-based path loss $\mathrm{PL}(d)=\max(1,d^{2.5})$, noise floor
+$N_0$, per-cell bandwidth $B$, idle power $P_0$, and maximum transmit
+power $P_{\max}$.
+
+Each action variable is tagged with a cell and an action type. Power,
+resource-block, and handover-offset variables assigned to cell $c$ are
+averaged into a normalized control value $\bar a_c\in[0,1]$ and mapped
+to physical parameters by
+
+\begin{align}
+P_c &= P_{\max}\,(0.4+0.6\,\bar a_c^{\mathrm{pow}}),\\
+\beta_c &= 0.3+0.7\,\bar a_c^{\mathrm{rb}},\\
+o_c &= 12\,(\bar a_c^{\mathrm{ho}}-0.5)\ \text{[dB]},
+\end{align}
+
+where $P_c$ is transmit power, $\beta_c\in[0,1]$ the active
+resource-block fraction, and $o_c$ a cell-individual handover offset.
+For user $u$, the received power from cell $c$ is
+$g_{u,c}=P_c/\mathrm{PL}(d_{u,c})$, the serving cell is
+$c^\star(u)=\arg\max_c g_{u,c}\,10^{o_c/10}$, and
+
+\begin{align}
+\mathrm{SINR}_u &=
+\frac{g_{u,c^\star}}{N_0+\sum_{c\neq c^\star} g_{u,c}},\\
+r_u &= \min\!\big(\beta_{c^\star} B\log_2(1+\mathrm{SINR}_u),\,
+r_{\max}\rho\big),
+\end{align}
+
+with $\rho$ the traffic load and $r_{\max}$ a per-user cap. The
+reported KPMs are the mean throughput $\bar r=\frac1{N_u}\sum_u r_u$,
+Jain's fairness index over $(r_u)$, the energy per delivered bit
+$\sum_c (P_0+P_c)/(\bar r\,)$, and a handover-failure indicator
+$\min\!\big(1,\,0.02\,(v/v_0)+0.01\,\overline{|o_c|}\big)$ that grows
+with mobility speed $v$ and with the magnitude of the applied offsets.
+Allowed relations are generated so that KPM thresholds (minimum
+edge throughput, maximum handover-failure rate, power-ownership and
+sleep/wake exclusivity) forbid the corresponding joint action tuples;
+each hard relation retains the planted feasible assignment so that
+coordination failure is distinguished from model infeasibility.
+
+% ============================================================
 \subsection{xApp scenarios}
 % ============================================================
 
@@ -2038,6 +2318,7 @@ scenarios.
 \centering
 \caption{O-RAN coordination scenarios}
 \label{tab:scenarios}
+\setlength{\tabcolsep}{4pt}\small
 \begin{tabular}{
 p{19mm}
 p{28mm}
@@ -2085,24 +2366,24 @@ Mixed direct, indirect, and implicit conflicts\\
 
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
 % ============================================================
 \subsection{Static instance suite}
 % ============================================================
 
-The static suite varies:
-
-\begin{itemize}
-    \item the number of action variables:
-    $n\in\{12,30,50,100,200,500\}$;
-    \item domain size:
-    $d\in\{3,4,8,16\}$;
-    \item constraint density;
-    \item relation arity;
-    \item fraction of symmetric separation constraints;
-    \item proportion of direct, indirect, and implicit conflicts.
-\end{itemize}
+The scenario suite of Table~\ref{tab:scenarios} uses
+$n\in\{12,18,20,24,30\}$ action variables with domain sizes
+$d\in\{3,4\}$, varying constraint density, relation arity, the fraction
+of symmetric separation constraints, and the proportion of direct,
+indirect, and implicit conflicts. Two complementary suites extend the
+size axis: a cold-start scale suite with
+$n\in\{30,100,300,600,1000\}$ near-threshold planted-feasible
+instances ($d=6$, $|\mathcal{C}|=2n$, tightness $0.25$), and a
+sequential suite of the same sizes in which a controlled fraction of
+relations changes between consecutive epochs
+(Section~\ref{sec:amortized-method}).
 
 The principal feasible suite uses planted feasible assignments. Each
 generated hard relation is constructed so that the planted assignment
@@ -2160,8 +2441,12 @@ Each transition is labelled as:
 This classification supports separate analysis of incremental reuse
 and value restoration.
 
-The principal dynamic configuration uses
-30 episodes, each containing 100 decision epochs.
+The principal dynamic configuration uses the five scenarios of
+Table~\ref{tab:scenarios}, each with 30 episodes of 100 consecutive
+decision epochs, for a total of $5\times30\times100=15{,}000$ decision
+epochs. Within every episode, the first epoch is a base epoch and the
+remaining 99 transitions follow a fixed schedule of restrictive,
+relaxed, utility-only, and mixed updates (Table~\ref{tab:incremental-results}).
 The fraction of modified variables or constraints between consecutive
 epochs is selected from
 
@@ -2201,21 +2486,21 @@ verifier.
     \item \textbf{GAC + CP-SAT:}
     the observable GAC stage is followed by complete CP-SAT.
 
-    \item \textbf{\legacy:}
-    continuous inference is followed by the original
-    violated-constraint or fixed-radius repair strategy.
+    \item \textbf{GAC + explanation repair:}
+    observable GAC followed by explanation-guided exact repair and
+    independent verification, \emph{without} the continuous stage.
 
-    \item \textbf{\method\ without incremental reuse:}
-    GAC is recomputed from the base domains at every epoch.
+    \item \textbf{\method\ (explanation):}
+    GAC, filtered continuous inference, explanation-guided repair with
+    progressive expansion and full-scope escalation, and verification.
 
-    \item \textbf{\method\ with radius-based repair:}
-    incremental GAC is used, but repair expansion follows a fixed
-    conflict-graph radius.
+    \item \textbf{\method\ (radius):}
+    as \method\ (explanation) but the repair core is expanded by a
+    fixed conflict-graph radius rather than by explanations.
 
-    \item \textbf{Full \method:}
-    incremental GAC, filtered continuous inference,
-    explanation-guided repair, full escalation, and independent
-    verification.
+    \item \textbf{\method\ (assumption):}
+    as \method\ (explanation) but the repair core is expanded using
+    CP-SAT sufficient-assumption cores.
 
 \end{enumerate}
 
@@ -2226,8 +2511,117 @@ filtering, incremental reuse, diagnostic information, or repair
 localization provides a measurable advantage.
 
 % ============================================================
+\subsection{Cold-start and amortized scale protocols}
+\label{sec:amortized-method}
+% ============================================================
+
+Two protocols separate the one-shot cost of the pipeline from its
+amortized cost over related epochs.
+
+\emph{Cold-start frontier.} For each size
+$n\in\{30,100,300,600,1000\}$, near-threshold planted-feasible
+instances are generated and solved once, from scratch, by (i) complete
+CP-SAT (model build and solve times recorded separately) and (ii) GAC
+followed by explanation-guided repair. This measures the regime in
+which no previous decision exists.
+
+\emph{Sequential amortized comparison.} Episodes of 30 consecutive
+epochs are generated in which a fraction
+$\delta\in\{2\%,10\%\}$ of the relations is re-randomized between
+epochs while preserving the planted assignment, so every epoch is
+feasible by construction. On identical episodes, three per-epoch
+strategies are compared: full CP-SAT re-solve from scratch; full
+CP-SAT re-solve warm-started with the previous verified solution as a
+solution hint; and incremental verified repair, which re-verifies the
+previous decision under the updated model and, when violated, runs
+explanation-guided local repair seeded from the violated relations
+only. The warm-started re-solve is included because solution hints are
+the standard practitioner answer to sequences of related models; it
+isolates whether the observed cost of re-solving is dominated by search
+(which hints reduce) or by model reconstruction (which they do not).
+
+% ============================================================
+\subsection{Literature-derived baselines}
+% ============================================================
+
+Two additional baselines instantiate published conflict-resolution
+principles on the identical instances. A \emph{QoS-aware optimizing}
+baseline, in the spirit of QACM \cite{wadud2024qacm}, maximizes the
+number of xApp requests kept subject to all registered hard relations.
+A \emph{bargaining} baseline, in the spirit of cooperative
+game-theoretic mitigation \cite{wadud2023game}, maximizes a discretized
+Nash-social-welfare surrogate (sum of per-variable log-utilities) under
+the same relations. Both are solved exactly with CP-SAT and pass the
+same independent verifier, making the comparison like-for-like on
+feasibility and latency; neither produces explanations or repair
+cores.
+
+% ============================================================
+\subsection{Verifier-validation gates}
+\label{sec:gates-method}
+% ============================================================
+
+Because every reported guarantee is conditional on the verifier, the
+verifier itself is validated by four gates executed before the main
+campaign.
+
+\begin{description}
+    \item[G1 (exhaustive oracle):] on randomly generated small
+    instances ($n\le 6$, $d\le 3$), every assignment is enumerated and
+    the verifier is compared with an independently coded oracle that
+    shares no helper code.
+    \item[G2 (second implementation):] a declarative CP-SAT model is
+    rebuilt from a JSON-normalized form of the instance by a separate
+    parser and checked for triple agreement with the oracle and the
+    production verifier.
+    \item[G3 (property-based testing):] randomized triples of instance,
+    assignment, and transformation check determinism,
+    constraint-permutation invariance, variable-renaming invariance,
+    and explicit rejection of out-of-domain values, missing variables,
+    and stale contexts.
+    \item[G4 (mutation testing):] mutants of planted-feasible solutions
+    (single-value changes, out-of-domain values, deleted actions, full
+    scrambles) are labelled by the oracle; the verifier must classify
+    every mutant identically. A mutation that happens to remain
+    feasible is counted as feasible, not as a required rejection.
+\end{description}
+
+A single divergence at any gate blocks the campaign.
+
+% ============================================================
 \subsection{Primary decision metrics}
 % ============================================================
+
+To avoid the ambiguity between raw success and verified feasibility,
+we fix the terminology of Table~\ref{tab:terminology} and use it
+consistently in every results table and figure.
+
+\begin{table}[t]
+\centering
+\caption{Decision-outcome terminology used throughout the evaluation.}
+\label{tab:terminology}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{p{0.30\columnwidth}p{0.60\columnwidth}}
+\toprule
+Term & Meaning\\
+\midrule
+Direct decode & GAC-filtered continuous decode accepted by the verifier
+without repair.\\
+Local repair & invalid decode corrected by exact repair on a proper
+variable subset (final core $<n$).\\
+Full-scope repair & decision obtained only after the repair core is
+expanded to the complete model ($n$ variables).\\
+Fallback & registered safe fallback accepted by the verifier.\\
+Blocked & no verifier-accepted action was produced.\\
+Optimized decision rate & direct decode $+$ local $+$ full-scope
+repair.\\
+Verified feasibility & optimized decision rate $+$ verified fallback.\\
+Deadline compliance & fraction of epochs whose verified decision
+completes within the stated bound.\\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table}
 
 The verified-feasibility rate is
 
@@ -2411,13 +2805,15 @@ Each stochastic configuration is evaluated with
 50 independent seeds.
 Paired methods use identical network traces, instances, and seeds.
 
-Binary outcomes are reported using paired differences and bootstrap
-95\% confidence intervals. Continuous metrics are reported using
-medians, interquartile ranges, tail percentiles, and paired effect
-sizes.
+Binary outcomes are reported using integer counts, paired differences,
+bootstrap 95\% confidence intervals, and exact McNemar tests on the
+discordant pairs of matched instances. Continuous metrics are reported
+using medians, interquartile ranges, tail percentiles, paired Wilcoxon
+signed-rank tests, and Cliff's $\delta$ effect sizes.
 
-Multiple hypothesis tests are corrected using Holm's procedure.
-The experimental unit, rather than the number of internal solver
+Multiple hypothesis tests are corrected using Holm's procedure within
+each comparison family (Table~\ref{tab:stats-paired}). The
+experimental unit, rather than the number of internal solver
 iterations, determines the sample size.
 
 Timeouts are treated as right-censored observations in runtime
@@ -2435,19 +2831,52 @@ The reported deadline thresholds are
 \label{sec:results}
 % ============================================================
 
+\subsection{Verifier validation (RQ8)}
+
+Table~\ref{tab:gates} reports the four verifier-validation gates of
+Section~\ref{sec:gates-method}. All gates pass with zero divergence:
+the production verifier agrees with the exhaustive oracle on all
+60{,}650 enumerated assignments, with the declarative CP-SAT
+re-implementation on all 1{,}800 triple-agreement checks, satisfies
+all 602{,}000 property-based checks, and classifies all 16{,}000
+labelled mutants identically to the oracle. These results support the
+claim that forwarded decisions are sound \emph{relative to the
+registered model}; they do not, and cannot, validate the model against
+a physical RAN.
+
+\begin{table}[t]
+\centering
+\caption{Verifier-validation gates. Every gate requires zero
+divergence; a mutation that remains feasible is counted as feasible by
+the oracle rather than as a required rejection.}
+\label{tab:gates}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{llrr}
+\toprule
+Gate & Content & Checks & Divergences\\
+\midrule
+G1 & exhaustive oracle (500 instances) & 60{,}650 & 0\\
+G2 & triple agreement with CP-SAT verifier & 1{,}800 & 0\\
+G3 & property-based (6+1 properties) & 602{,}000 & 0\\
+G4 & labelled mutants (13{,}594 invalid) & 16{,}000 & 0\\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table}
+
+% ============================================================
 \subsection{Propagation correctness and explanation audit}
 
-All propagation sanity gates passed
-2500 tests, 5 configurations, and 50 seeds. On instances small
-enough for exhaustive enumeration, the propagator removed
-1540 values, and no removed value belonged to a globally
-feasible assignment.
+All propagation sanity gates passed across the five scenarios and 50
+seeds. On instances small enough for exhaustive enumeration, no value
+removed by the propagator belonged to a globally feasible assignment,
+consistent with the solution-preservation result. On the dynamic suite,
+incremental propagation reproduced the fully recomputed filtered
+domains on all 15{,}000 epochs (100\% domain agreement).
 
-The explanation checker evaluated
-1200 value-removal explanations and
-300 domain-wipeout explanations. It accepted
-100\% of valid explanations and rejected
-100\% of deliberately corrupted explanations.
+The explanation checker accepted 100\% of valid value-removal and
+domain-wipeout explanations and rejected 100\% of deliberately
+corrupted explanations.
 
 These checks are prerequisites for interpreting performance results.
 A propagator that removes a feasible value or emits an invalid
@@ -2463,18 +2892,20 @@ propagation.
 \centering
 \caption{Consistency-propagation results.}
 \label{tab:propagation-results}
+\setlength{\tabcolsep}{4pt}\small
 \begin{tabular}{lrrrrrrrrr}
 \toprule
 Scenario & Epochs & Val before & Val after & $r_D$ & Tup before & Tup after & $r_R$ & Med GAC & P95 GAC\\
 & & & & (\%) & & & (\%) & (ms) & (ms)\\
 \midrule
-S1 & 50 & 1800 & 1414 & 21.4 & 2403 & 1713 & 28.7 & 0.1 & 0.1\\
-S2 & 50 & 3600 & 2676 & 25.7 & 6083 & 3697 & 39.2 & 0.2 & 0.2\\
-S3 & 50 & 4000 & 3148 & 21.3 & 7419 & 4858 & 34.5 & 0.2 & 0.2\\
-S4 & 50 & 4800 & 3908 & 18.6 & 9694 & 6846 & 29.4 & 0.2 & 0.3\\
-S5 & 50 & 6000 & 4662 & 22.3 & 11747 & 7488 & 36.3 & 0.3 & 0.3\\
+S1 & 50 & 1800 & 1414 & 21.4 & 2403 & 1713 & 28.7 & 0.07 & 0.09\\
+S2 & 50 & 3600 & 2676 & 25.7 & 6083 & 3697 & 39.2 & 0.15 & 0.18\\
+S3 & 50 & 4000 & 3148 & 21.3 & 7419 & 4858 & 34.5 & 0.17 & 0.20\\
+S4 & 50 & 4800 & 3908 & 18.6 & 9694 & 6846 & 29.4 & 0.20 & 0.24\\
+S5 & 50 & 6000 & 4662 & 22.3 & 11747 & 7488 & 36.3 & 0.26 & 0.31\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
 \begin{figure}[t]
@@ -2492,7 +2923,10 @@ filtering from instances on which propagation substantially reduces
 the active action space. Aggregate averages alone would hide this
 difference.
 
-Our results show that GAC successfully removes 21.7\% of candidate values and 33.7\% of relation tuples on average across scenarios. The relative reduction was largest in S2 and smallest in S4.
+Our results show that GAC removes candidate values and relation tuples
+at a pooled rate of 21.7\% and 34.1\%, respectively; the macro-average
+over the five scenarios is 21.9\% and 33.6\%. The relative reduction
+was largest in S2 and smallest in S4.
 
 % ============================================================
 \subsection{Verified feasibility and deadline compliance}
@@ -2502,47 +2936,59 @@ A decision is feasible only if accepted by the independent verifier.
 
 \begin{table*}[t]
 \centering
-\caption{End-to-end coordination results on the static suite.}
+\caption{End-to-end coordination outcomes on the static suite
+(250 instances per method), using the terminology of
+Table~\ref{tab:terminology}. The first five columns are \emph{integer
+instance counts} that sum to $N$ (250, or 249 where one instance
+errored); Feas.\ is the verified-feasibility rate (direct + local +
+full + verified fallback), and $\le$100\,ms is deadline compliance
+(fraction whose verified decision completes within the strict budget).
+Latencies are medians and 95th percentiles over all instances.}
 \label{tab:main-results}
+\setlength{\tabcolsep}{4pt}\small
 \begin{tabular}{lrrrrrrrrr}
 \toprule
-Method & Accepted without repair (\%) & Local Repair (\%) & Full-scope Repair (\%) & Fallback (\%) & Blocked (\%) & Timeout (\%) & Median & P95 & $\le 100$ms & Utility\\
-& (\%) & (\%) & (\%) & (\%) & (\%) & (ms) & (ms) & (\%) & \\
+Method & Direct & Local & Full & Fall- & Blk. & Feas. & $\le$100 & Med. & P95\\
+& & rep. & rep. & back & & (\%) & ms (\%) & (ms) & (ms)\\
 \midrule
-Uncoordinated & 100.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 100.0 & 0.34\\
-Static priority & 100.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 100.0 & 0.34\\
-Continuous only & 29.6 & 0.0 & 0.0 & 24.4 & 46.0 & 0.0 & 185.5 & 382.6 & 29.6 & 0.42\\
-GAC + decode & 56.8 & 0.0 & 0.0 & 25.6 & 17.6 & 0.0 & 84.9 & 271.9 & 56.8 & 0.42\\
-CP-SAT & 100.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 2.9 & 5.0 & 100.0 & 0.44\\
-GAC + CP-SAT & 100.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 2.9 & 5.0 & 100.0 & 0.44\\
-\method-legacy & 56.8 & 17.6 & 0.0 & 25.6 & 0.0 & 0.0 & 83.8 & 270.6 & 57.2 & 0.42\\
-\method w/o incremental & 56.8 & 17.6 & 0.0 & 25.6 & 0.0 & 0.0\\
-Full \method & 56.8 & 17.6 & 0.0 & 25.6 & 0.0 & 0.0 & 85.1 & 267.2 & 56.8 & 0.42\\
+Uncoordinated & 0 & 0 & 0 & 0 & 250 & 0.0 & 0.0 & 0.0 & 0.1\\
+Static priority & 0 & 0 & 0 & 0 & 250 & 0.0 & 0.0 & 0.0 & 0.0\\
+Continuous only & 189 & 0 & 0 & 0 & 61 & 75.6 & 23.6 & 180.4 & 365.7\\
+GAC + decode & 186 & 0 & 0 & 0 & 64 & 74.4 & 44.4 & 80.6 & 251.3\\
+\cpsat & 0 & 0 & 250 & 0 & 0 & 100.0 & 100.0 & 2.8 & 4.8\\
+\gac\ +\ \cpsat & 2 & 0 & 248 & 0 & 0 & 100.0 & 100.0 & 2.6 & 4.7\\
+\gac\ + expl.\ repair & 2 & 248 & 0 & 0 & 0 & 100.0 & 100.0 & 1.8 & 3.8\\
+\method\ (expl.) & 185 & 57 & 0 & 0 & 7 & 97.2 & 57.4 & 79.8 & 253.3\\
+\method\ (radius) & 185 & 57 & 0 & 0 & 7 & 97.2 & 57.0 & 82.6 & 251.9\\
+\method\ (assum.) & 185 & 58 & 0 & 0 & 6 & 97.6 & 57.8 & 81.3 & 254.4\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
 \begin{table*}[t]
 \centering
 \caption{End-to-end latency and deadline compliance on the static suite (over all epochs).}
 \label{tab:latency}
+\setlength{\tabcolsep}{4pt}\small
 \begin{tabular}{lrrrrrr}
 \toprule
 Method & Median & IQR & P95 & $\le 10$ms & $\le 100$ms & $\le 1000$ms \\
 & (ms) & (ms) & (ms) & (\%) & (\%) & (\%) \\
 \midrule
-Uncoordinated & 0.1 & 0.1 & 0.2 & 100.0 & 100.0 & 100.0 \\
-Static priority & 0.1 & 0.1 & 0.2 & 100.0 & 100.0 & 100.0 \\
-Continuous only & 82.3 & 15.1 & 110.2 & 0.0 & 85.0 & 100.0 \\
-GAC + decode & 82.5 & 15.2 & 111.0 & 0.0 & 84.5 & 100.0 \\
-CP-SAT & 2.9 & 1.2 & 8.5 & 98.0 & 100.0 & 100.0 \\
-GAC + CP-SAT & 3.2 & 1.3 & 8.9 & 97.5 & 100.0 & 100.0 \\
-\method-legacy & 86.4 & 18.0 & 120.5 & 0.0 & 81.0 & 100.0 \\
-GAC + expl repair & 5.1 & 2.2 & 12.4 & 92.0 & 100.0 & 100.0 \\
-\method w/o inc & 85.1 & 17.5 & 115.3 & 0.0 & 83.0 & 100.0 \\
-Full \method & 85.1 & 17.5 & 115.3 & 0.0 & 83.0 & 100.0 \\
+Uncoordinated & 0.0 & 0.0 & 0.0 & 100.0 & 100.0 & 100.0\\
+Static priority & 0.0 & 0.0 & 0.0 & 100.0 & 100.0 & 100.0\\
+Continuous only & 180.4 & 190.0 & 365.7 & 2.8 & 30.4 & 100.0\\
+GAC + decode & 80.6 & 122.1 & 251.3 & 6.4 & 58.0 & 100.0\\
+\cpsat & 2.8 & 1.5 & 4.8 & 100.0 & 100.0 & 100.0\\
+\gac\ +\ \cpsat & 2.6 & 1.7 & 4.7 & 100.0 & 100.0 & 100.0\\
+\gac\ + expl.\ repair & 1.8 & 1.4 & 3.8 & 100.0 & 100.0 & 100.0\\
+\method\ (expl.) & 79.9 & 125.7 & 253.3 & 6.8 & 57.4 & 100.0\\
+\method\ (radius) & 82.6 & 128.1 & 251.9 & 6.8 & 57.4 & 100.0\\
+\method\ (assum.) & 81.3 & 125.9 & 254.4 & 5.6 & 57.8 & 100.0\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
 
@@ -2565,19 +3011,74 @@ advantage.
 
 Crucially, the contribution is not a new GAC algorithm, but an auditable O-RAN coordination architecture that uses incremental propagation explanations to localize exact repair while explicitly separating local-support failure from fractional joint-decoding failure.
 
-The main comparison is reported as:
+The main comparison is reported as follows (Table~\ref{tab:main-results},
+integer counts over 250 instances). Under the strict 100~ms budget,
+three methods reach 100\% verified feasibility with 100\% deadline
+compliance: complete \cpsat\ (median 2.8~ms), \gac+\cpsat\ (2.6~ms), and
+\gac\ followed by explanation-guided repair with no continuous stage
+(1.8~ms). The last is the fastest of the three because it repairs a
+small local core (2 variables, median) instead of solving the complete
+model, and it produces an auditable explanation for each repair. Adding
+the continuous stage is counterproductive under the budget: the three
+\method\ variants (explanation, radius, assumption) reach only
+97.2--97.6\% verified feasibility, meet the 100~ms bound on 57--58\% of
+decisions, and block 6--7 of 250 instances, because the fixed number of
+relation-conditioned sweeps pushes the median latency to about 80~ms.
+The uncoordinated and static-priority baselines forward no
+verifier-accepted action (100\% blocked). This is a property of the
+planted near-threshold relations, under which a random or greedy
+per-variable proposal essentially never satisfies every hard relation
+jointly; their network KPIs are therefore reported only
+counterfactually, and the two baselines serve as execution-semantics
+references rather than as competitive coordination methods.
 
-\begin{quote}
-Relative to direct CP-SAT, full \method\
-reduced median latency by 45ms,
-reduced P95 latency by 120ms, and changed
-deadline compliance by +15.2\% [14.0, 16.4].
-\end{quote}
+Table~\ref{tab:stats-paired} makes the key comparisons inferential
+rather than descriptive. The latency advantage of GAC with
+explanation-guided repair over complete \cpsat\ on matched instances is
+large and significant (paired Wilcoxon $p<10^{-33}$, Cliff's
+$\delta=-0.45$); both attain 100\% verified feasibility, so no
+feasibility test applies. The feasibility deficit of the continuous
+pipeline relative to its non-continuous counterpart rests on 7
+discordant instances (exact McNemar $p=0.016$ raw, $p=0.078$ after Holm
+correction) and its latency penalty is near-total
+($\delta=0.97$).
+
+\begin{table*}[t]
+\centering
+\caption{Paired tests on matched static instances (Holm-corrected
+within each family). Feas.\ columns give verified feasibility; disc.\
+gives the discordant-pair counts used by the exact McNemar test;
+latency tests are paired Wilcoxon signed-rank with Cliff's $\delta$.}
+\label{tab:stats-paired}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{lrrrrrrr}
+\toprule
+Comparison (A vs B) & $N$ & Feas.\ A/B (\%) & disc. &
+$p_{\mathrm{McN}}^{\mathrm{Holm}}$ & Med.\ lat.\ A/B (ms) &
+$p_{\mathrm{Wilc}}^{\mathrm{Holm}}$ & $\delta$\\
+\midrule
+GAC+expl.\ repair vs \cpsat & 250 & 100/100 & 0/0 & --- & 1.76/2.76 &
+$<10^{-30}$ & $-0.45$\\
+GAC+expl.\ repair vs \gac+\cpsat & 250 & 100/100 & 0/0 & --- &
+1.76/2.63 & $<10^{-30}$ & $-0.40$\\
+\method\ (expl.) vs GAC+expl.\ repair & 249 & 97.2/100 & 0/7 & 0.078 &
+79.9/1.75 & $<10^{-40}$ & $+0.97$\\
+\method\ (expl.) vs \cpsat & 249 & 97.2/100 & 0/7 & 0.078 & 79.9/2.76 &
+$<10^{-40}$ & $+0.95$\\
+\method\ (expl.) vs \method\ (radius) & 249 & 97.2/97.2 & 1/1 & 1.0 &
+79.9/82.6 & 0.68 & $0.00$\\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table*}
 
 % ============================================================
 \subsection{Fractional stalls after propagation}
 
-Note that mathematically, we refer to the non-converging state as a 	extit{symmetry-preserving fractional fixed point}, while in experimental detection with finite precision, we use the term 	extit{operational fractional stall}.
+Note that mathematically we refer to the non-converging state as a
+\textit{symmetry-preserving fractional fixed point}, while in
+experimental detection with finite precision we use the term
+\textit{operational fractional stall}.
 
 The analysis distinguishes:
 
@@ -2593,12 +3094,20 @@ The analysis distinguishes:
 
 \begin{table}[t]
 \centering
-\caption{Continuous-stage diagnostics before and after GAC. GAC removes locally unsupported values, but residual stalls after GAC involve values that retain support in every incident relation. These residual stalls may arise from symmetry or from incompatibility among separately valid local supports.}
+\caption{Operational fractional-stall rate of the continuous stage
+without GAC (Continuous only) and with GAC (Full \method), and the
+residual invalid non-stalled decode rate, per scenario. GAC removes
+locally unsupported values but does not reduce the stall rate (and
+slightly increases it, because tighter filtered domains leave more
+symmetric ties), confirming that GAC and exact repair address different
+failure modes. Invalid decodes are zero here because every invalid
+decode in this suite also satisfies the numerical stall condition.}
 \label{tab:stall-results}
+\setlength{\tabcolsep}{4pt}\small
 \begin{tabular}{lrrr}
 \toprule
 Scenario &
-No GAC stalls &
+No-GAC stalls &
 GAC stalls &
 Invalid decode\\
 &
@@ -2606,13 +3115,14 @@ Invalid decode\\
 (\%) &
 (\%)\\
 \midrule
-S1 & 5.0 & 2.1 & 0.4\\
-S2 & 5.0 & 2.1 & 0.4\\
-S3 & 5.0 & 2.1 & 0.4\\
-S4 & 5.0 & 2.1 & 0.4\\
-S5 & 5.0 & 2.1 & 0.4\\
+S1 & 24.0 & 26.0 & 0.0\\
+S2 & 12.0 & 12.0 & 0.0\\
+S3 & 22.0 & 22.0 & 0.0\\
+S4 & 30.0 & 32.0 & 0.0\\
+S5 & 34.0 & 36.7 & 0.0\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table}
 
 \begin{figure}[t]
@@ -2639,30 +3149,73 @@ Table~\ref{tab:repair-results} compares core-construction strategies.
 
 \begin{table}[t]
 \centering
-\caption{Repair success rate as a function of initial core size. All strategies were evaluated on the identical 64 repair-triggering epochs.}
+\caption{Repair-strategy ablation on the 64 repair-triggering decodes of
+the standard suite. All strategies fix the boundary variables to the
+same decoded values and search for a verifier-accepted assignment; they
+differ only in how the core is initialised and expanded. ``Used''
+counts how often a propagation explanation (e), a CP-SAT assumption
+core (a), or deterministic frontier adjacency (f) drove an expansion.
+Fixed violated-scope and radius-0/1 cores fail on 3.1\% of cases
+(radius-2 on 1.6\%); the expanding strategies reach 100\% by releasing,
+on average, fewer than 0.1 boundary variables, keeping the median core
+at 2 variables versus 24 for full-scope solving. Larger nested cores
+never become infeasible, confirming repair-feasibility monotonicity.}
 \label{tab:repair-results}
-\begin{tabular}{lrrrr}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{lrrrrcr}
 \toprule
-Repair & Trigger & Median & Initial & Success\\
-Strategy & Epochs & Time & Core & Rate (\%)\\
+Strategy & Succ. & Init. & Final & Exp. & Used & Med.\\
+& (\%) & core & core & & (e/a/f) & (ms)\\
 \midrule
-Full scope (all epochs) & 250 & 2.9 & $n$ & 100.0\\
-Radius-based & 64 & 2.0 & 3.0 & 68.8\\
-Explanation-guided & 64 & 4.0 & 2.0 & 68.8\\
+Violated & 96.9 & 2 & 2 & 0.00 & 0/0/0 & 0.84\\
+Radius 0 & 96.9 & 2 & 2 & 0.00 & 0/0/0 & 0.62\\
+Radius 1 & 96.9 & 2 & 2 & 0.00 & 0/0/0 & 0.61\\
+Radius 2 & 98.4 & 2 & 2 & 0.00 & 0/0/0 & 0.61\\
+Frontier & 100.0 & 2 & 2 & 0.08 & 0/0/2 & 0.61\\
+Explanation & 100.0 & 2 & 2 & 0.09 & 2/0/2 & 0.60\\
+Assumption & 100.0 & 2 & 2 & 0.08 & 0/2/0 & 0.59\\
+Full scope & 100.0 & 24 & 24 & 0.00 & 0/0/0 & 2.87\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{artifacts/figures/fig4_utility.pdf}
 \caption{
-Cumulative network utility over time. No claim of statistical equivalence is made.
+Network utility of verifier-accepted decisions across the static
+suite. No claim of statistical equivalence between methods is made.
 }
 \label{fig:utility}
 \end{figure}
 
-Our results demonstrate that the explanation-guided strategy successfully reduces the initial repair core from 3.0 variables under radius-one initialization to 2.0 variables under explanation-guided initialization, while completely avoiding the overhead of full-scope escalation (which targets $n$ variables).
+The ablation isolates the contribution of core expansion. On the
+standard suite the violated-constraint scope is small (median 2
+variables) and already resolves 96.9\% of repairs; the remaining
+$\sim 3\%$ require releasing a coupled boundary variable, which the
+fixed violated-scope and radius-0/1 strategies cannot do and therefore
+fail. Two statistical caveats must accompany these counts. First, the
+success-rate differences rest on only 1--2 discordant cases out of 64
+and are \emph{not} statistically significant (exact McNemar
+$p\ge 0.5$, Holm-adjusted $p=1.0$ over the pooled 114 repair cases);
+the ablation therefore does not establish that expanding strategies
+succeed more often, only that they cannot do worse by construction
+(nested cores) and did resolve every observed failure of the fixed
+cores. Second, what the data do establish firmly is the cost
+difference: explanation-guided repair is significantly faster and
+smaller-cored than full-scope solving (median 0.69 versus 2.32~ms on
+the pooled cases, paired Wilcoxon $p\approx 2\times10^{-20}$, Cliff's
+$\delta=-0.96$; median final core 4 versus 24 variables), and radius-2
+pre-inflates the core relative to explanation expansion (median 5.5
+versus 4; $p\approx 2\times10^{-9}$, $\delta=-0.29$). Propagation
+explanations and CP-SAT assumption cores were each exercised on two of
+the standard cases; on the repair-stress suite the value of a tight
+core is starker, where explanation/assumption keep the core at 8
+variables while radius-1 and radius-2 inflate it to 16 and 22. Thus the
+explanation mechanism is what lets exact repair remain both local and
+cheap while retaining conditional completeness; on this workload it is
+not what determines whether repair succeeds.
 
 % ============================================================
 \subsection{Incremental propagation}
@@ -2672,41 +3225,71 @@ separately.
 
 \begin{table*}[t]
 \centering
-\caption{Incremental propagation by transition type. The paired gain reflects the reduction in processing time relative to matched full recomputation on the identical model. Domain agreement is 100\% across all epochs.}
+\caption{Incremental propagation versus full recomputation by
+transition type, over the 15{,}000-epoch dynamic suite. Times are mean
+GAC propagation time per epoch; the gain is the mean reduction relative
+to matched full recomputation on the identical model. \emph{Restored}
+is the mean number of variable values re-activated after relaxation.
+Incremental propagation reproduces the recomputed filtered domains
+exactly (100\% domain agreement) on every epoch.}
 \label{tab:incremental-results}
-\begin{tabular}{lrrrrrrrr}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{lrrrrrr}
 \toprule
-Transition & Count & Recomp. & Increm. & Decision & Paired Gain & 95\% CI & Restored & Domain\\
-& & (ms) & (ms) & (ms) & (\%) & (\%) & & Agree (\%)\\
+Transition & Count & Recomp. & Increm. & Gain & Restored & Domain\\
+& & (ms) & (ms) & (\%) & (mean) & agree (\%)\\
 \midrule
-Base & 150 & 0.19 & -- & 101.43 & -- & -- & -- & 100\\
-Restrictive & 750 & 4.60 & 4.40 & 4.7 & 4.3 & [4.1, 4.5] & 0 & 100\\
-Relaxed & 750 & 333.30 & 6.00 & 336.8 & 98.2 & [98.1, 98.3] & 13.3 & 100\\
-Mixed & 12600 & 1.11 & 0.02 & 2.5 & 98.2 & [98.1, 98.3] & 62.3 & 100\\
-Utility-only & 750 & 1.30 & 1.20 & 1.3 & 7.7 & [7.5, 7.9] & 0 & 100\\
+Base (full recompute) & 150 & --- & --- & --- & --- & 100.0\\
+Restrictive & 750 & 0.102 & 0.014 & 86.3 & 0.00 & 100.0\\
+Relaxed & 750 & 0.100 & 0.050 & 50.2 & 0.38 & 100.0\\
+Mixed & 12600 & 0.087 & 0.059 & 32.0 & 0.67 & 100.0\\
+Utility-only & 750 & 0.099 & 0.004 & 95.9 & 0.00 & 100.0\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
-The dynamic data confirms that the median propagation time for incremental updates falls dramatically from 0.19 ms for the base epoch to just 0.02 ms for mixed continuous evaluations. This demonstrates that the incremental support structures are properly maintained, achieving over 89\% latency reduction during iterative refinement. Correctness is assessed separately by comparing the filtered domains and active relation tables produced by incremental propagation with those obtained by full recomputation. The restored-value figures report the median number of variable-value pairs surviving GAC after a context invalidation; the retained-restoration fractions are 91.0\% and 93.1\% for relaxed and mixed transitions respectively, confirming that restoration is operationally important.
+The dynamic data show that incremental maintenance reproduces the fully
+recomputed filtered domains on all 15{,}000 epochs while reducing mean
+propagation time by 86.3\% on restrictive transitions and 95.9\% on
+utility-only transitions, where the warm support state is reused almost
+in full. The gain is smaller for relaxed (50.2\%) and mixed (32.0\%)
+transitions because relaxation requires restoring the affected
+connected component to its base domains and re-establishing consistency
+before reuse can resume; the mean number of restored values per epoch
+(0.38 for relaxed and 0.67 for mixed transitions) quantifies this
+restoration work. Correctness is assessed independently by comparing
+the filtered domains produced by incremental propagation with those
+obtained by full recomputation on the same model, yielding 100\%
+agreement and confirming that value restoration after relaxation is
+performed soundly.
 
 % ============================================================
 \subsection{Scalability}
 \begin{table*}[t]
 \centering
-\caption{Scalability results stratified by variable count $n$ and domain size $d$ ($|C| \approx 3n$, $\sum |R_c| \approx 10nd$). Latency is reported in ms, Memory in MB.}
+\caption{Scalability by variable count $n$ (domain size $d=4$,
+$|C|=n$ constraints), median latency over ten seeds for
+$n\in\{12,30,50\}$ and one seed at $n=100$. \gac+\,expl.\
+denotes GAC followed by explanation-guided repair without the
+continuous stage; \method\ (cont.) is the full continuous pipeline.
+Blank cells were not completed within the run; the dedicated
+cold-start frontier of Table~\ref{tab:coldstart} covers
+$n$ up to 1{,}000 with five seeds per size.}
 \label{tab:scalability-strat}
-\begin{tabular}{lrrrrrrrr}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{lrrrr}
 \toprule
-$n$ & $d$ & $|C|$ & $\sum|R_c|$ & \cpsat\ & \gac+\cpsat\ & \method\ & Memory \\
-& & & & (ms) & (ms) & (ms) & (MB) \\
+$n$ & \cpsat\ & \gac+\cpsat\ & \gac+\,expl. & \method\ (cont.)\\
+& (ms) & (ms) & (ms) & (ms)\\
 \midrule
-12 & 3 & 36 & 360 & 1.2 & 1.4 & 15.5 & 12\\
-30 & 4 & 90 & 1200 & 3.1 & 3.6 & 34.2 & 28\\
-50 & 8 & 150 & 4000 & 16.2 & 18.5 & 95.8 & 84\\
-100 & 16 & 300 & 16000 & 102.6 & 115.4 & 412.3 & 312\\
+12 & 1.3 & 1.4 & 0.9 & 22.6\\
+30 & 3.7 & 3.7 & 2.8 & 162.5\\
+50 & 5.4 & 5.6 & 3.5 & 295.0\\
+100 & 12.3 & 12.2 & --- & ---\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
 Scalability is evaluated as a function of variable count, domain size,
@@ -2721,44 +3304,207 @@ Distribution of final exact-repair core sizes.
 \label{fig:repair-core}
 \end{figure*}
 
-Over all tested instances and constraints at this scale, we observe no crossover point: direct complete CP-SAT (M4) remains faster (median latency 2.9 ms) than the full explanation-guided pipeline (median latency 85.1 ms). The proposed framework therefore contributes explainable diagnosis, auditable localization, and bounded safe execution, but does not claim runtime superiority over modern exact solvers on instances of this size.
+The scalability sweep separates the practical variant from the
+continuous pipeline. GAC followed by explanation-guided repair tracks
+\cpsat\ closely and is in fact slightly faster (0.9 versus 1.3~ms at
+$n=12$, 3.5 versus 5.4~ms at $n=50$), because it repairs small local
+cores. The continuous variant, in contrast, grows from 22.6~ms at
+$n=12$ to 295~ms at $n=50$ and did not complete for $n\ge 100$ within
+the run, because it performs a fixed number of relation-conditioned
+sweeps over all active tuples at every epoch. This reinforces the main
+finding: the continuous stage does not scale and is not required for
+feasibility; the auditable localized-repair architecture does.
 
 % ============================================================
-\subsection{Temporal stability}
+\subsection{Cold-start frontier and amortized sequential cost (RQ5)}
+\label{sec:amortized-results}
 
-The temporal experiment compares $\mu=0$ against
-pre-registered values $\mu \in \{0.01, 0.1, 0.5, 1.0\}$.
+Tables~\ref{tab:coldstart} and~\ref{tab:amortized} answer RQ5 with the
+protocols of Section~\ref{sec:amortized-method}. These campaigns were
+executed in a separate documented environment (2-core Linux container,
+OR-Tools 9.15; secondary manifest in the artifact); all comparisons are
+within-environment and paired.
+
+\begin{table}[t]
+\centering
+\caption{Cold-start frontier on near-threshold planted-feasible
+instances ($d=6$, $|\mathcal{C}|=2n$, five seeds per size): median
+(p95) total latency in ms. Build denotes CP-SAT model-construction
+time and GAC propagation time, respectively. All decisions are
+verifier-accepted.}
+\label{tab:coldstart}
+\setlength{\tabcolsep}{3pt}\small
+\begin{tabular}{lrrrr}
+\toprule
+$n$ & \cpsat\ med.\ (p95) & build & GAC+expl.\ med.\ (p95) & build\\
+\midrule
+30 & 1.5 (2.5) & 0.4 & 1.8 (2.6) & 0.9\\
+100 & 4.3 (4.7) & 1.0 & 5.4 (9.1) & 2.7\\
+300 & 11.1 (14.1) & 2.8 & 17.7 (20.0) & 8.2\\
+600 & 22.5 (23.9) & 5.3 & 33.2 (47.3) & 16.5\\
+1000 & 43.0 (46.5) & 10.7 & 83.1 (105.2) & 34.0\\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table}
 
 \begin{table*}[t]
 \centering
-\caption{Temporal stability and network-level performance}
-\label{tab:temporal-results}
-\begin{tabular}{lrrrrr}
+\caption{Amortized per-epoch cost over episodes in which a fraction
+$\delta$ of the relations changes between epochs (planted assignment
+preserved; identical episodes for the three strategies; 30 epochs per
+episode). All strategies attain 100\% verified feasibility on every
+epoch. Latencies are median (p95) in ms.}
+\label{tab:amortized}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{lrrr}
 \toprule
-Method & Throughput & Energy/bit & HO failures & Fairness\\
-& (Mbps) & ($\mu$J) & (\%) & (Jain)\\
+$\delta$ / $n$ & \cpsat\ re-solve & \cpsat\ + hints &
+Incremental verified repair\\
 \midrule
-Uncoordinated & 7.2 & 0.0 & 0.1 & 0.339 \\
-CP-SAT & 10.7 & 0.0 & 0.0 & 0.448 \\
-\method & 10.0 & 0.0 & 0.0 & 0.428 \\
+2\% / 100 & 3.3 (6.3) & 3.4 (6.3) & \textbf{0.06} (2.8)\\
+2\% / 300 & 9.2 (12.1) & 9.2 (12.8) & \textbf{1.4} (3.0)\\
+2\% / 600 & 16.6 (20.8) & 18.0 (21.9) & \textbf{2.6} (9.4)\\
+2\% / 1000 & 25.3 (31.1) & 27.4 (32.8) & \textbf{5.1} (24.3)\\
+10\% / 1000 & 19.1 (27.5) & 20.5 (28.3) & \textbf{4.5} (56.7)\\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
-The analysis reports the trade-off between reduced action churn and
-lost instantaneous utility. Temporal stability is not considered an
-improvement if it merely freezes a low-utility decision or causes SLA
-violations.
+Two findings emerge. First, in the cold-start setting the proposed
+pipeline holds \emph{no} latency advantage at scale: complete \cpsat\
+remains within the 100~ms budget up to $n=1000$ (43~ms median) whereas
+one-shot GAC with explanation repair exceeds it in the tail (83~ms
+median, p95 105~ms), the observable GAC stage itself accounting for
+roughly 40\% of the cost. Any deployment that faces isolated,
+unrelated coordination problems should therefore call the complete
+solver directly. Second, the near-real-time RIC does not face isolated
+problems: consecutive epochs share most of their model. In the
+sequential protocol, incremental verified repair costs a median of
+0.06--5.1~ms per epoch across $n=100$--$1000$ at $\delta=2\%$, versus
+3.3--27~ms for either re-solve strategy---a five-fold median advantage
+at $n=1000$ that grows with model size, at identical (100\%) verified
+feasibility. Solution hints do not help the re-solve baselines,
+confirming that their cost is dominated by model reconstruction rather
+than search: re-solving pays in the size of the model, incremental
+repair pays in the size of the change. The trade-off is tail behaviour:
+at $\delta=10\%$ the repair median remains low (4.5~ms at $n=1000$) but
+its p95 reaches 57~ms as occasional epochs require large cores, while
+re-solve latency is stable. Deployments with hard per-epoch tail
+budgets can bound this by escalating to the full solver whenever the
+estimated core exceeds a threshold, which is exactly the escalation
+rule of Section~\ref{sec:repair}.
+
+% ============================================================
+\subsection{Literature-derived baselines}
+
+On the scenario suite, the QoS-aware optimizing baseline and the
+bargaining baseline attain 100\% verified feasibility at 2.2~ms and
+3.5~ms median latency respectively, keeping on average 64\% of the
+xApp-preferred actions. Their feasibility and latency are thus
+comparable to complete \cpsat, as expected since both are exact
+single-shot optimizations. The architectural differences are what
+separate them from the proposed framework: neither produces
+explanations, repair cores, or any per-decision audit trail, and both
+pay the full re-solve cost at every epoch of a sequential deployment,
+where Table~\ref{tab:amortized} applies unchanged.
+
+% ============================================================
+\subsection{Network-level performance and temporal stability}
+
+Table~\ref{tab:temporal-results} reports network KPIs, separating the
+counterfactual raw decode from verifier-accepted executed decisions.
+
+\begin{table*}[t]
+\centering
+\caption{Network-level performance on the static suite. Counterfactual
+throughput averages the raw proposed decode (what would happen if it
+were executed unverified); verified throughput, energy, and fairness
+average only verifier-accepted executed decisions, with the sample size
+$n$ shown. Uncoordinated execution has no verified-executed decisions
+($n=0$), so only its counterfactual value is defined. Energy per bit is
+in $\mu$J/bit.}
+\label{tab:temporal-results}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{lrrrr}
+\toprule
+Method & Counterfact. & Verified & Energy & Fairness\\
+& thr.\ (Mbps) & thr.\ (Mbps) & ($\mu$J/bit) & (Jain)\\
+\midrule
+Uncoordinated & 11.7 & --- ($n{=}0$) & --- & ---\\
+\cpsat & 10.8 & 10.8 ($n{=}250$) & 50.8 & 0.443\\
+\gac\ + expl.\ repair & 10.4 & 10.4 ($n{=}249$) & 52.2 & 0.433\\
+\method\ (expl.) & 10.9 & 10.9 ($n{=}242$) & 50.6 & 0.451\\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table*}
+
+\begin{table}[t]
+\centering
+\caption{Temporal-stability sweep of the churn weight $\mu$ over the
+dynamic sequence (GAC + explanation-guided repair, planted-feasible
+transitions). Increasing $\mu$ reduces mean action churn at negligible
+throughput cost, with feasibility preserved.}
+\label{tab:temporal-mu}
+\setlength{\tabcolsep}{4pt}\small
+\begin{tabular}{lrrr}
+\toprule
+$\mu$ & Mean churn & Throughput (Mbps) & Feasible (\%)\\
+\midrule
+0.00 & 0.354 & 11.44 & 100.0\\
+0.01 & 0.350 & 11.44 & 100.0\\
+0.10 & 0.340 & 11.45 & 100.0\\
+0.50 & 0.319 & 11.44 & 100.0\\
+1.00 & 0.316 & 11.43 & 100.0\\
+\bottomrule
+\end{tabular}
+\normalsize
+\end{table}
+
+Temporal stability yields a modest, monotone trade-off
+(Table~\ref{tab:temporal-mu}): raising $\mu$ from $0$ to $1$ lowers mean
+action churn by about 11\% (0.354 to 0.316) at a throughput cost below
+0.2\%, while every executed decision remains verifier-feasible.
+Stability is not considered an improvement if it merely freezes a
+low-utility decision or causes SLA violations.
 
 % ============================================================
 \subsection{Ablation study}
 
-The ablation of the framework is fully detailed within Table~\ref{tab:main-results}. Full \method\ produces a verified action in every evaluated epoch: 56.8\% are accepted directly after GAC-filtered continuous decoding, 17.6\% are obtained through local exact repair, and 25.6\% use the registered verified fallback. No full-scope repair, blocked decision, or timeout is reported in this static suite. By comparison, Continuous Only produces 29.6\% valid direct decodes and 24.4\% verified fallbacks, while 46.0\% of its candidates are blocked.
+The ablation of the framework is detailed by
+Table~\ref{tab:main-results} (integer counts over 250 instances).
+Removing exact repair (the GAC + decode ablation) leaves 186 direct
+decodes and blocks the remaining 64, isolating the contribution of
+repair. GAC followed by explanation-guided repair without continuous
+inference converts nearly all of those into local repairs: 2 direct and
+248 local repairs, 0 blocked. Adding continuous inference
+(\method\ (expl.)) does not help feasibility---185 direct, 57 local
+repairs, but 7 blocked because the continuous sweeps exceed the 100~ms
+budget. Swapping explanation-guided cores for radius or assumption cores
+(\method\ (radius)/(assum.)) leaves the counts essentially unchanged
+(185/57/7 and 185/58/6), confirming that under the budget the
+bottleneck is the continuous stage, not the repair-core rule.
 
 % ============================================================
 \subsection{Is the continuous stage justified?}
 
-Given that In the aggregate results reported here, direct CP-SAT has lower median latency than the full pipeline, the continuous stage is justified strictly for its diagnostic utility. It exposes the underlying topology of fractional stalls, differentiating symmetric structural conflicts from simple capacity limits, which CP-SAT conceals within its monolithic search.
+The evidence does not justify the continuous stage. The direct
+architectural alternative---GAC, then explanation-guided repair, then
+the verifier, with no continuous inference---dominates the full
+continuous pipeline on every operational axis: 100\% versus 97.2\%
+verified feasibility, 100\% versus 57\% compliance under the 100~ms
+budget, and a 1.8~ms versus 80~ms median latency, with no budget-blocked
+decisions. The continuous stage adds a fixed number of
+relation-conditioned sweeps whose only distinctive product is the
+operational-stall and fractionality diagnosis of
+Table~\ref{tab:stall-results}; it does not improve feasibility and it
+routinely blows the control budget. We therefore recommend the
+continuous stage only when its fractional-stall diagnosis is itself an
+operational requirement, and default to GAC with explanation-guided
+repair otherwise. This is a negative result about our own continuous
+stage, reported rather than hidden.
 
 % ============================================================
 \subsection{Interpretation boundaries}
@@ -2803,7 +3549,11 @@ must be restored or invalidated correctly.
 Fourth, CP-SAT already contains sophisticated presolve, propagation,
 learning, and optimization mechanisms. An external GAC layer adds
 value only if its incremental reuse, observable diagnostics, or
-explanation-guided localization outweighs its overhead.
+explanation-guided localization outweighs its overhead. The cold-start
+frontier of Table~\ref{tab:coldstart} quantifies this boundary
+explicitly: the one-shot pipeline holds no latency advantage at scale,
+and the operational case for the architecture is amortized across
+related epochs.
 
 Fifth, the continuous update is heuristic. GAC does not provide a
 global convergence or approximation guarantee for the continuous map,
@@ -2812,7 +3562,10 @@ and symmetric fractional states may persist after propagation.
 Sixth, exact local repair is complete only relative to its induced
 subproblem. Conditional global completeness is recovered only when the
 repair core reaches the full model and the exact solver finishes
-within its time limit.
+within its time limit. Under a high change rate, the tail of the
+per-epoch repair latency degrades (p95 of 57~ms at $\delta=10\%$,
+$n=1000$) even though the median remains low; hard tail budgets
+require the documented escalation rule.
 
 Seventh, implicit conflicts cannot be verified solely from E2 control
 messages. Their representation depends on the quality of the
@@ -2828,6 +3581,23 @@ found in a commercial multi-vendor RAN. Results must therefore be
 stratified by conflict type, relation arity, network load, mobility,
 domain size, and xApp count.
 
+Tenth, the framework represents conflict relations as explicit
+positive tables. This is convenient for small-arity or sparse allowed
+relations and gives directly auditable explanations, but the table
+size grows with domain size and arity, so dense high-arity implicit
+conflicts may become memory-intensive. Compact intensional
+representations---multi-valued decision diagrams, binary decision
+diagrams, automata (regular/\textsc{mddc}) constraints, watched-support
+propagators, or dedicated global constraints---would preserve GAC while
+scaling better, at the cost of more complex explanation extraction;
+integrating them is left to future work.
+
+Eleventh, the verifier-validation gates establish agreement with an
+exhaustive oracle and a second implementation on the tested input
+distributions; they cannot certify behaviour on inputs outside those
+distributions, and the guarantee remains conditional on the registered
+model.
+
 Finally, simulator-based results may not capture E2 communication
 delays, scheduling jitter, message loss, hardware effects, or
 vendor-specific behaviour. At least one representative dynamic
@@ -2842,9 +3612,9 @@ O-RAN platform.
 This paper formulated conflict-free xApp coordination as a dynamic
 finite-domain constraint optimization problem and introduced
 \method, a consistency-guided framework combining incremental
-generalized arc consistency, continuous fractional-stall diagnosis,
-explanation-guided exact repair, and independent decision
-verification.
+generalized arc consistency, explanation-guided exact repair, and
+independent decision verification, with an optional continuous
+diagnosis stage.
 
 The propagation stage removes actions that have no support in an
 incident hard relation and detects some contradictory contexts before
@@ -2867,25 +3637,46 @@ through a fixed graph radius. Full-scope CP-SAT remains the final
 deadline-bounded escalation, and an independently implemented verifier
 remains the execution gate.
 
-The evaluation shows that
-are based exclusively on the verified continuous inference and exact repair implementation.
-In particular, incremental propagation
-15.4\\% reduction in candidate values,
-explanation-guided repair
-median core size of 4 variables and median latency of 45ms, and the complete
-pipeline
-100\\% verified feasibility with 99.1\\% deadline compliance.
+The evaluation quantifies each stage on matched instances with integer
+counts, paired bootstrap confidence intervals, and Holm-corrected
+paired tests. Generalized arc consistency removes 21.7\% of candidate
+values and 34.1\% of relation tuples (pooled). Explanation-guided
+repair is significantly cheaper than full-scope solving (Cliff's
+$\delta=-0.96$) with a strictly local core, although the observed
+success-rate differences between core strategies are not statistically
+significant at the available sample size. Incremental propagation
+reproduces the fully recomputed domains on all 15{,}000 dynamic epochs
+(100\% agreement) while reducing propagation time by up to 96\%. Under
+a strict 100~ms budget, GAC with explanation-guided repair and
+independent verification attains 100\% verified feasibility at a
+1.8~ms median latency, significantly faster than complete CP-SAT,
+whereas adding continuous inference lowers feasibility to 97.2\% and
+deadline compliance to 57\%; this negative result about our own
+continuous stage is reported rather than hidden. The verifier that
+gates every decision is itself validated by four gates---exhaustive
+enumeration, a second implementation without shared code,
+property-based testing, and mutation testing---with zero divergence
+over more than 680{,}000 checks.
 
-The comparison against complete CP-SAT and GAC followed by CP-SAT
-determines whether continuous inference is operationally justified.
-If complete CP-SAT remains faster on small or moderately sized
-instances, this result constitutes an applicability boundary rather
-than a result to be hidden.
+The operational case for the architecture is amortized. In a
+cold-start setting the pipeline holds no latency advantage at scale:
+complete CP-SAT remains within budget up to a thousand variables. In
+the sequential setting that actually characterizes the near-real-time
+RIC, verified incremental repair of the previous decision costs a
+median of 0.06--5.1~ms per epoch where any from-scratch re-solve,
+warm-started or not, costs 3.3--27~ms, because re-solving pays in the
+size of the model while local repair pays in the size of the change.
+The contribution of \method\ is therefore an auditable,
+explanation-producing coordination architecture whose advantage
+compounds across related decision epochs, together with a validated
+independent verification layer; it is not proposed as a faster
+one-shot solver.
 
 Future work will investigate selectively activated stronger
 consistencies, explanation minimization, uncertainty-aware conflict
 relations, distributed propagation across multiple near-real-time
-RICs, and hardware-in-the-loop validation.
+RICs, closed-loop validation on an emulated O-RAN platform, and
+hardware-in-the-loop validation.
 
 % ============================================================
 \section*{Statements and Declarations}
@@ -2916,10 +3707,9 @@ All authors reviewed and approved the final manuscript.
 \subsection*{Data availability}
 
 The code, generated instances, audited raw logs, explanation traces,
-and analysis scripts will be made available in an anonymous repository
-for peer review.
-
-The complete source code and execution logs are available at [ANONYMIZED FOR DOUBLE-BLIND REVIEW].
+verifier-validation reports, and analysis scripts are provided as a
+review artifact and will be deposited in a public archival repository
+with a persistent identifier upon acceptance.
 
 \subsection*{Code availability}
 
@@ -2931,9 +3721,12 @@ The artifact will contain:
     \item the continuous coordinator;
     \item the CP-SAT adapters;
     \item the radius-based and explanation-guided repair methods;
-    \item the independent verifier;
-    \item the static and dynamic instance generators;
-    \item the scripts reproducing all tables and figures.
+    \item the independent verifier and its validation gates;
+    \item the static, dynamic, cold-start, and amortized instance
+    generators;
+    \item the literature-derived baselines;
+    \item the scripts reproducing all tables, figures, and paired
+    statistical tests.
 \end{itemize}
 
 \subsection*{Ethics approval}
@@ -2950,15 +3743,12 @@ Not applicable.
 
 \subsection*{Use of generative artificial intelligence}
 
-An OpenAI language model was used to assist with the initial
-organization and language drafting of the manuscript. The authors
-reviewed, corrected, and validated the resulting text and assume full
-responsibility for the scientific content, mathematical statements,
-references, experimental protocol, numerical results, and final
-submitted version.
-
-This statement must be adapted to the journal policy and to the actual
-use of generative artificial-intelligence tools.
+Generative language models were used to assist with the organization
+and language drafting of the manuscript and with the review of the
+analysis scripts. The authors reviewed, corrected, and validated the
+resulting text and code and assume full responsibility for the
+scientific content, mathematical statements, references, experimental
+protocol, numerical results, and final submitted version.
 
 % ============================================================
 % Bibliography

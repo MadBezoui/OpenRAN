@@ -98,18 +98,26 @@ class ContinuousConsensus:
             
         return new_marginals
         
-    def solve(self, max_iter=100, tol=1e-4) -> float:
+    def solve(self, max_iter=100, tol=1e-4):
+        """Run the consensus update to a stopping condition.
+
+        Returns (residual, iterations) so the caller can record the actual
+        number of iterations executed before convergence or the iteration cap.
+        """
         residual = 0.0
+        iterations = 0
         for _ in range(max_iter):
+            iterations += 1
             new_marginals = self.step()
-            
+
             residual = 0.0
             for var_id in self.variables:
-                diff = sum(abs(new_marginals[var_id.id].get(a, 0) - self.marginals[var_id.id].get(a, 0)) 
+                diff = sum(abs(new_marginals[var_id.id].get(a, 0) - self.marginals[var_id.id].get(a, 0))
                            for a in self.domains[var_id.id].active_values)
                 residual = max(residual, diff)
-                
+
             self.marginals = new_marginals
             if residual < tol:
                 break
-        return residual
+        self.iterations = iterations
+        return residual, iterations

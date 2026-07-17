@@ -1,0 +1,11 @@
+method,n,d,c_ratio,tightness,seed,outcome,build_ms,solve_ms,total_ms,verified
+CP-SAT,1000,6,2.0,0.25,42,full_solve,12.027,34.217,47.061,True
+GAC + expl repair,1000,6,2.0,0.25,42,local_repair,35.672,50.625,103.718,True
+CP-SAT,1000,6,2.0,0.25,43,full_solve,10.651,28.715,40.125,True
+GAC + expl repair,1000,6,2.0,0.25,43,local_repair,33.968,66.536,105.603,True
+CP-SAT,1000,6,2.0,0.25,44,full_solve,8.725,31.82,41.365,True
+GAC + expl repair,1000,6,2.0,0.25,44,local_repair,34.395,41.116,83.085,True
+CP-SAT,1000,6,2.0,0.25,45,full_solve,9.078,32.075,43.007,True
+GAC + expl repair,1000,6,2.0,0.25,45,local_repair,33.345,28.902,65.946,True
+CP-SAT,1000,6,2.0,0.25,46,full_solve,12.598,30.854,44.272,True
+GAC + expl repair,1000,6,2.0,0.25,46,local_repair,33.508,12.045,48.967,True

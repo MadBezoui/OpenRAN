@@ -1,64 +1,43 @@
-import argparse
-import csv
-import os
-import uuid
-
+"""Scalability sweep over variable count, multiple seeds."""
+import argparse, csv, os
 from src.generators.static_generator import generate_static_instance, SCENARIO_PRESETS
 from src.verification.verifier import Verifier
 from src.experiments.pipeline import run_pipeline
 
+METHODS = [
+    ("CP-SAT",           dict(gac=False, continuous=False, repair=True, strategy="fullscope", decode="utility")),
+    ("GAC + CP-SAT",     dict(gac=True,  continuous=False, repair=True, strategy="fullscope", decode="utility")),
+    ("GAC + expl repair",dict(gac=True,  continuous=False, repair=True, strategy="explanation", decode="utility")),
+    ("ConsistXApp expl", dict(gac=True,  continuous=True,  repair=True, strategy="explanation", decode="continuous")),
+]
+FIELDS = ["method", "n", "seed", "total_time_ns", "outcome", "peak_mem_mb"]
+
+
 def main():
-    parser = argparse.ArgumentParser()
-    args = parser.parse_args()
-    
-    scalability_sizes = [12, 30, 50, 100, 200, 500]
-    seeds = [42, 43, 44] # Just 3 seeds to be reasonably fast
-    methods = ["M4", "M5", "M9"]
-    
-    out_dir = "artifacts/raw"
-    os.makedirs(out_dir, exist_ok=True)
-    out_file = os.path.join(out_dir, "scalability_results.csv")
-    
-    fields = [
-        "run_id", "method_id", "scenario_id", "instance_seed",
-        "num_variables", "num_constraints", "total_time_ns", "propagation_time_ns",
-        "repair_time_ns", "continuous_time_ns", "wipeout"
-    ]
-    
-    with open(out_file, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fields)
-        writer.writeheader()
-        
-        for size in scalability_sizes:
-            for seed in seeds:
-                print(f"Running Scalability: n={size}, Seed: {seed}")
-                
-                # S5_Scale preset
-                SCENARIO_PRESETS["S5_Scale"] = dict(num_vars=size, domain_size=4, num_constraints=size, sym_frac=0.5)
-                
-                variables, domains, relations, planted_solution = generate_static_instance("S5_Scale", seed)
-                verifier = Verifier(domains, relations)
-                
-                for method in methods:
-                    ctx_id = f"ctx_scale_{size}_{seed}_{method}"
-                    metrics = run_pipeline(variables, domains, relations, ctx_id, verifier, method)
-                    
-                    row = {
-                        "run_id": str(uuid.uuid4()),
-                        "method_id": method,
-                        "scenario_id": f"Scale_{size}",
-                        "instance_seed": seed,
-                        "num_variables": size,
-                        "num_constraints": size,
-                    }
-                    
-                    for k, v in metrics.items():
-                        if k in fields:
-                            row[k] = v
-                            
-                    writer.writerow(row)
-                    
-    print(f"Results saved to {out_file}")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--sizes", default="12,30,50,100,200,500")
+    ap.add_argument("--seeds", type=int, default=10)
+    ap.add_argument("--deadline_ms", type=int, default=100000)
+    ap.add_argument("--out", default="artifacts/raw/scalability_results.csv")
+    a = ap.parse_args()
+    os.makedirs(os.path.dirname(a.out), exist_ok=True)
+    sizes = [int(x) for x in a.sizes.split(",")]
+    f = open(a.out, "w", newline=""); w = csv.DictWriter(f, fieldnames=FIELDS); w.writeheader()
+    for n in sizes:
+        SCENARIO_PRESETS["Scale"] = dict(num_vars=n, domain_size=4,
+                                         num_constraints=n, sym_frac=0.5)
+        for seed in range(42, 42 + a.seeds):
+            V, D, R, _ = generate_static_instance("Scale", seed)
+            for name, cfg in METHODS:
+                ver = Verifier(D, R)
+                m = run_pipeline(V, D, R, f"scale_{n}_{seed}_{name}", ver, cfg, a.deadline_ms)
+                mem = 0.0
+                w.writerow({"method": name, "n": n, "seed": seed,
+                            "total_time_ns": m["total_time_ns"],
+                            "outcome": m["outcome"], "peak_mem_mb": round(mem, 1)})
+        f.flush(); print(f"size {n} done", flush=True)
+    f.close()
+
 
 if __name__ == "__main__":
     main()

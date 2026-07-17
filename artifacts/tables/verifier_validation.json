@@ -1,0 +1,30 @@
+{
+ "G1_exhaustive": {
+  "instances": 500,
+  "assignments": 60650,
+  "divergences": 0,
+  "time_s": 0.1,
+  "pass": true
+ },
+ "G2_triple_agreement": {
+  "assignments": 1800,
+  "divergences": 0,
+  "time_s": 0.4,
+  "pass": true
+ },
+ "G3_property_based": {
+  "properties_checked": 602000,
+  "failures": 0,
+  "failure_kinds": [],
+  "time_s": 2.4,
+  "pass": true
+ },
+ "G4_mutation": {
+  "mutants": 16000,
+  "oracle_invalid": 13594,
+  "misclassified": 0,
+  "time_s": 0.1,
+  "pass": true
+ },
+ "gates_pass": true
+}

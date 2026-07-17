@@ -1,0 +1,17 @@
+{
+ "G3_property_based": {
+  "properties_checked": 602000,
+  "failures": 0,
+  "failure_kinds": [],
+  "time_s": 2.1,
+  "pass": true
+ },
+ "G4_mutation": {
+  "mutants": 1600,
+  "oracle_invalid": 1372,
+  "misclassified": 0,
+  "time_s": 0.0,
+  "pass": true
+ },
+ "gates_pass": true
+}

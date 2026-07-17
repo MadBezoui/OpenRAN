@@ -1,0 +1,31 @@
+method,n,d,c_ratio,tightness,seed,outcome,build_ms,solve_ms,total_ms,verified
+CP-SAT,30,6,2.0,0.25,42,full_solve,0.55,1.985,2.589,True
+GAC + expl repair,30,6,2.0,0.25,42,local_repair,0.943,0.658,1.791,True
+CP-SAT,30,6,2.0,0.25,43,full_solve,0.392,1.09,1.526,True
+GAC + expl repair,30,6,2.0,0.25,43,local_repair,0.832,1.192,2.205,True
+CP-SAT,30,6,2.0,0.25,44,full_solve,0.399,0.869,1.309,True
+GAC + expl repair,30,6,2.0,0.25,44,direct,1.01,0.0,1.218,True
+CP-SAT,30,6,2.0,0.25,45,full_solve,0.405,0.689,1.134,True
+GAC + expl repair,30,6,2.0,0.25,45,direct,0.834,0.0,0.93,True
+CP-SAT,30,6,2.0,0.25,46,full_solve,0.412,1.886,2.342,True
+GAC + expl repair,30,6,2.0,0.25,46,local_repair,1.108,1.548,2.755,True
+CP-SAT,100,6,2.0,0.25,42,full_solve,0.996,3.004,4.089,True
+GAC + expl repair,100,6,2.0,0.25,42,local_repair,2.766,4.714,7.83,True
+CP-SAT,100,6,2.0,0.25,43,full_solve,1.08,3.514,4.69,True
+GAC + expl repair,100,6,2.0,0.25,43,local_repair,2.327,2.183,4.86,True
+CP-SAT,100,6,2.0,0.25,44,full_solve,0.992,3.164,4.294,True
+GAC + expl repair,100,6,2.0,0.25,44,local_repair,2.897,2.075,5.411,True
+CP-SAT,100,6,2.0,0.25,45,full_solve,0.975,2.421,3.486,True
+GAC + expl repair,100,6,2.0,0.25,45,local_repair,2.285,6.824,9.431,True
+CP-SAT,100,6,2.0,0.25,46,full_solve,1.041,3.595,4.733,True
+GAC + expl repair,100,6,2.0,0.25,46,local_repair,2.734,1.318,4.387,True
+CP-SAT,300,6,2.0,0.25,42,full_solve,2.719,7.295,10.251,True
+GAC + expl repair,300,6,2.0,0.25,42,local_repair,8.15,3.313,12.6,True
+CP-SAT,300,6,2.0,0.25,43,full_solve,2.708,7.422,10.356,True
+GAC + expl repair,300,6,2.0,0.25,43,local_repair,8.068,4.382,20.519,True
+CP-SAT,300,6,2.0,0.25,44,full_solve,2.811,8.039,11.093,True
+GAC + expl repair,300,6,2.0,0.25,44,local_repair,8.044,4.723,13.666,True
+CP-SAT,300,6,2.0,0.25,45,full_solve,4.342,9.919,14.503,True
+GAC + expl repair,300,6,2.0,0.25,45,local_repair,10.898,6.065,17.95,True
+CP-SAT,300,6,2.0,0.25,46,full_solve,2.908,9.305,12.466,True
+GAC + expl repair,300,6,2.0,0.25,46,local_repair,10.623,6.125,17.671,True

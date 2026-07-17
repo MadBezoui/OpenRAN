@@ -1,55 +1,241 @@
-run_id,method_id,scenario_id,instance_seed,num_variables,num_constraints,total_time_ns,propagation_time_ns,repair_time_ns,continuous_time_ns,wipeout
-49d77366-3158-44fb-90f6-770e23fdc09f,M4,Scale_12,42,12,12,4723375,0,4591124,0,False
-cbd9648b-95ad-4669-91bf-d411e296bfc6,M5,Scale_12,42,12,12,1886250,157917,1657125,0,False
-3821ab40-3d72-49b5-8c98-892b6e610f46,M9,Scale_12,42,12,12,19958708,123667,1112708,18625375,False
-3940c4c4-5bf3-467a-b8d7-c7da5de19541,M4,Scale_12,43,12,12,2281750,0,2228083,0,False
-d2e6e6ef-a951-4719-9eb7-a28057d65ac8,M5,Scale_12,43,12,12,2364959,107792,2202750,0,False
-5cb6c8a3-7406-46c5-b5b1-92c8910758ec,M9,Scale_12,43,12,12,62517042,104209,0,62363375,False
-130f2dd9-ec52-4642-b4e8-9165c2c8d594,M4,Scale_12,44,12,12,3467042,0,3398458,0,False
-e8ecfcce-6666-464b-b6b4-9337959167f2,M5,Scale_12,44,12,12,3749458,112625,3576250,0,False
-afe8978f-9e23-4879-afda-b251bce89be4,M9,Scale_12,44,12,12,175072875,107083,1088916,173771917,False
-0fcdab57-c79d-42b7-974c-a6516f9b0f13,M4,Scale_30,42,30,30,5144542,0,5039333,0,False
-2b46b5fe-327f-4997-bb85-c0a7d8935161,M5,Scale_30,42,30,30,5388084,293667,4963000,0,False
-8bb055ab-86a6-4d82-bbdd-ca711d36a6bc,M9,Scale_30,42,30,30,251203625,295875,1103583,249653750,False
-9bb69da7-b9e1-420a-94d4-58892465873a,M4,Scale_30,43,30,30,3144042,0,3038792,0,False
-c69b3847-5f1c-4f51-9f3b-dcf0751bad5e,M5,Scale_30,43,30,30,3672250,321125,3230250,0,False
-0825d1b7-30fd-4b14-a615-d93dbfd29687,M9,Scale_30,43,30,30,228347958,317708,0,227928584,False
-34f5a589-9ad4-44a9-afaa-99601406c6a9,M4,Scale_30,44,30,30,4358333,0,4233750,0,False
-8bc31979-3743-4608-99de-f54da3251f31,M5,Scale_30,44,30,30,4716500,308666,4288209,0,False
-fd819582-9692-4e17-a449-18aa21f51a91,M9,Scale_30,44,30,30,133949833,310000,0,133546792,False
-77f6f4e3-3fec-475c-b78b-b3f10a50991d,M4,Scale_50,42,50,50,6387667,0,6204458,0,False
-8a85bd60-e8c4-434a-9697-76db7772f6d5,M5,Scale_50,42,50,50,6604125,507291,5906376,0,False
-87941901-2c4f-40c4-8c97-4f68e9872d3a,M9,Scale_50,42,50,50,355304042,503208,0,354663583,False
-2729120a-5d8e-40fc-bb19-99add74d6a39,M4,Scale_50,43,50,50,5249458,0,5078624,0,False
-a35c1013-aa8c-404d-960c-86eda88b174b,M5,Scale_50,43,50,50,5955917,671000,5100874,0,False
-eb965484-f6b5-4156-a105-c22e7dde672e,M9,Scale_50,43,50,50,336786833,513500,0,336125834,False
-696f5854-9523-431e-9842-69292085d06f,M4,Scale_50,44,50,50,5004292,0,4849208,0,False
-5fd74d37-050a-42db-bc12-f2900a77a300,M5,Scale_50,44,50,50,5667042,675708,4812875,0,False
-638c776b-8611-49f9-98be-b21719cc94a2,M9,Scale_50,44,50,50,328460125,503625,0,327803958,False
-cd77bead-2de2-400f-86db-c61ab7b2a27b,M4,Scale_100,42,100,100,12343500,0,12028958,0,False
-47080cae-cc00-4d83-bdbd-e020d02c48a7,M5,Scale_100,42,100,100,13302458,1032500,11952791,0,False
-0adf88bb-6fa8-40c0-8406-899b232968eb,M9,Scale_100,42,100,100,735265208,1541333,958750,732380542,False
-08480055-aae4-47ab-bc98-52aeeed7459a,M4,Scale_100,43,100,100,10902333,0,10599667,0,False
-c20bec96-f059-4c4c-886c-d8ada6ad3aaf,M5,Scale_100,43,100,100,12161000,1058875,10781291,0,False
-2b143ce5-9f96-4047-9232-66d508bd8b49,M9,Scale_100,43,100,100,713904000,1158916,1780000,710631458,False
-eb6424f6-2e58-4031-82a4-9e5a6ba907f9,M4,Scale_100,44,100,100,13134834,0,12814541,0,False
-8d087c98-dd59-48a5-8228-a1ccdc568037,M5,Scale_100,44,100,100,14386833,1031667,13043083,0,False
-be4e697c-cb5c-4a43-ad00-a1806d5f9e76,M9,Scale_100,44,100,100,942172417,1106791,1546291,939083000,False
-6b2047c7-bc0d-4381-9a3f-5a88b593980a,M4,Scale_200,42,200,200,32702167,0,31926251,0,False
-74cd6fe1-918d-4342-999a-7764bc1554a8,M5,Scale_200,42,200,200,27278541,2050417,24568167,0,False
-f5e91b4f-1a69-4b3c-bb9a-0611ad85dee9,M9,Scale_200,42,200,200,1396931417,2502750,1030417,1392168291,False
-47a29531-c77e-4c37-aeb8-38dcae1c47dc,M4,Scale_200,43,200,200,23935583,0,23278834,0,False
-18060cb1-4c52-4360-811e-a9ce4870748e,M5,Scale_200,43,200,200,24902917,1953834,22355291,0,False
-96a94291-df7f-4c67-adcd-6b0208b794f1,M9,Scale_200,43,200,200,1554299166,1948000,495959,1551108167,False
-9c7ae18f-8f4a-49e8-b44e-da3ef04a17d8,M4,Scale_200,44,200,200,24782708,0,23505459,0,False
-927172c6-9e52-47ac-87ac-6987b7d1b3cd,M5,Scale_200,44,200,200,25580041,1957708,22972542,0,False
-0bd6fa3e-3e6c-41cf-99bf-9ffbbcc60aa7,M9,Scale_200,44,200,200,1462242791,2025583,1432250,1457971083,False
-bc781be9-51b8-452a-b2ae-25712664b01b,M4,Scale_500,42,500,500,56577292,0,54858875,0,False
-e8393997-b674-4016-9443-c853cb5ceb45,M5,Scale_500,42,500,500,62294459,5568833,55159292,0,False
-aab080e7-674c-45ea-86e1-9dc38a7d803b,M9,Scale_500,42,500,500,3586622917,5556750,2107541,3577362208,False
-2cbd34b1-823a-4860-a4b0-d0d63b72687d,M4,Scale_500,43,500,500,54874125,0,53318667,0,False
-a37d1551-1225-4020-afd6-e880aead6293,M5,Scale_500,43,500,500,60646542,5554000,53276043,0,False
-211692bb-05ee-4ea2-a110-3fa0f17cc898,M9,Scale_500,43,500,500,3404484291,5907916,3816499,3380289000,False
-f405ae54-1fe6-4c12-a665-108a07d373d5,M4,Scale_500,44,500,500,59760500,0,58355124,0,False
-51545d8e-7e62-421b-a7e3-48040be2c5b3,M5,Scale_500,44,500,500,65916750,5612709,57957750,0,False
-8e27f39d-9965-4b9d-a852-69bc4f052a7f,M9,Scale_500,44,500,500,4008117291,5541625,3678916,3997313209,False
+method,n,seed,total_time_ns,outcome,peak_mem_mb
+CP-SAT,12,42,4083400,full_repair,0.0
+GAC + CP-SAT,12,42,1709900,full_repair,0.0
+GAC + expl repair,12,42,1250800,local_repair,0.0
+ConsistXApp expl,12,42,17291000,local_repair,0.0
+CP-SAT,12,43,2143800,full_repair,0.0
+GAC + CP-SAT,12,43,2168400,full_repair,0.0
+GAC + expl repair,12,43,921100,local_repair,0.0
+ConsistXApp expl,12,43,55344300,direct,0.0
+CP-SAT,12,44,2831300,full_repair,0.0
+GAC + CP-SAT,12,44,2761800,full_repair,0.0
+GAC + expl repair,12,44,1868000,local_repair,0.0
+ConsistXApp expl,12,44,152328400,local_repair,0.0
+CP-SAT,12,45,1169400,full_repair,0.0
+GAC + CP-SAT,12,45,1221600,full_repair,0.0
+GAC + expl repair,12,45,1086400,local_repair,0.0
+ConsistXApp expl,12,45,25277400,local_repair,0.0
+CP-SAT,12,46,830500,full_repair,0.0
+GAC + CP-SAT,12,46,966800,full_repair,0.0
+GAC + expl repair,12,46,563100,local_repair,0.0
+ConsistXApp expl,12,46,3823800,direct,0.0
+CP-SAT,12,47,1323900,full_repair,0.0
+GAC + CP-SAT,12,47,1479100,full_repair,0.0
+GAC + expl repair,12,47,1096800,local_repair,0.0
+ConsistXApp expl,12,47,19814000,direct,0.0
+CP-SAT,12,48,1114600,full_repair,0.0
+GAC + CP-SAT,12,48,1159900,full_repair,0.0
+GAC + expl repair,12,48,703200,local_repair,0.0
+ConsistXApp expl,12,48,12693600,direct,0.0
+CP-SAT,12,49,1468100,full_repair,0.0
+GAC + CP-SAT,12,49,1552000,full_repair,0.0
+GAC + expl repair,12,49,794100,local_repair,0.0
+ConsistXApp expl,12,49,33689700,direct,0.0
+CP-SAT,12,50,1251700,full_repair,0.0
+GAC + CP-SAT,12,50,1304900,full_repair,0.0
+GAC + expl repair,12,50,707200,local_repair,0.0
+ConsistXApp expl,12,50,62567400,direct,0.0
+CP-SAT,12,51,701000,full_repair,0.0
+GAC + CP-SAT,12,51,101700,direct,0.0
+GAC + expl repair,12,51,86100,direct,0.0
+ConsistXApp expl,12,51,240300,direct,0.0
+CP-SAT,30,42,4661800,full_repair,0.0
+GAC + CP-SAT,30,42,4959500,full_repair,0.0
+GAC + expl repair,30,42,3167100,local_repair,0.0
+ConsistXApp expl,30,42,223181700,local_repair,0.0
+CP-SAT,30,43,3046000,full_repair,0.0
+GAC + CP-SAT,30,43,3267900,full_repair,0.0
+GAC + expl repair,30,43,2931100,local_repair,0.0
+ConsistXApp expl,30,43,201610400,direct,0.0
+CP-SAT,30,44,4250700,full_repair,0.0
+GAC + CP-SAT,30,44,4221800,full_repair,0.0
+GAC + expl repair,30,44,3239700,local_repair,0.0
+ConsistXApp expl,30,44,123304100,direct,0.0
+CP-SAT,30,45,3120900,full_repair,0.0
+GAC + CP-SAT,30,45,3076300,full_repair,0.0
+GAC + expl repair,30,45,1453600,local_repair,0.0
+ConsistXApp expl,30,45,107990200,direct,0.0
+CP-SAT,30,46,4733100,full_repair,0.0
+GAC + CP-SAT,30,46,4825900,full_repair,0.0
+GAC + expl repair,30,46,4083700,local_repair,0.0
+ConsistXApp expl,30,46,267564100,local_repair,0.0
+CP-SAT,30,47,2174000,full_repair,0.0
+GAC + CP-SAT,30,47,2373000,full_repair,0.0
+GAC + expl repair,30,47,1175700,local_repair,0.0
+ConsistXApp expl,30,47,36354300,local_repair,0.0
+CP-SAT,30,48,4734800,full_repair,0.0
+GAC + CP-SAT,30,48,4840800,full_repair,0.0
+GAC + expl repair,30,48,4220600,local_repair,0.0
+ConsistXApp expl,30,48,288055100,direct,0.0
+CP-SAT,30,49,5297400,full_repair,0.0
+GAC + CP-SAT,30,49,5059000,full_repair,0.0
+GAC + expl repair,30,49,2650900,local_repair,0.0
+ConsistXApp expl,30,49,252537100,direct,0.0
+CP-SAT,30,50,2740700,full_repair,0.0
+GAC + CP-SAT,30,50,2682400,full_repair,0.0
+GAC + expl repair,30,50,1594200,local_repair,0.0
+ConsistXApp expl,30,50,60586500,local_repair,0.0
+CP-SAT,30,51,1935100,full_repair,0.0
+GAC + CP-SAT,30,51,2126300,full_repair,0.0
+GAC + expl repair,30,51,1369400,local_repair,0.0
+ConsistXApp expl,30,51,22679700,local_repair,0.0
+CP-SAT,50,42,5221300,full_repair,0.0
+GAC + CP-SAT,50,42,5375600,full_repair,0.0
+GAC + expl repair,50,42,3008900,local_repair,0.0
+ConsistXApp expl,50,42,313245500,direct,0.0
+CP-SAT,50,43,5302600,full_repair,0.0
+GAC + CP-SAT,50,43,5562200,full_repair,0.0
+GAC + expl repair,50,43,2356100,local_repair,0.0
+ConsistXApp expl,50,43,300644100,direct,0.0
+CP-SAT,50,44,5275100,full_repair,0.0
+GAC + CP-SAT,50,44,5210200,full_repair,0.0
+GAC + expl repair,50,44,6834200,local_repair,0.0
+ConsistXApp expl,50,44,289422000,direct,0.0
+CP-SAT,50,45,6903200,full_repair,0.0
+GAC + CP-SAT,50,45,6717500,full_repair,0.0
+GAC + expl repair,50,45,3940900,local_repair,0.0
+ConsistXApp expl,50,45,329528200,direct,0.0
+CP-SAT,50,46,6956400,full_repair,0.0
+GAC + CP-SAT,50,46,7167900,full_repair,0.0
+GAC + expl repair,50,46,6157300,local_repair,0.0
+ConsistXApp expl,50,46,408907700,local_repair,0.0
+CP-SAT,50,47,5790900,full_repair,0.0
+GAC + CP-SAT,50,47,6213200,full_repair,0.0
+GAC + expl repair,50,47,6072400,local_repair,0.0
+ConsistXApp expl,50,47,342740800,local_repair,0.0
+CP-SAT,50,48,4787500,full_repair,0.0
+GAC + CP-SAT,50,48,4773400,full_repair,0.0
+GAC + expl repair,50,48,2191400,local_repair,0.0
+ConsistXApp expl,50,48,251898700,direct,0.0
+CP-SAT,50,49,6033100,full_repair,0.0
+GAC + CP-SAT,50,49,5913300,full_repair,0.0
+GAC + expl repair,50,49,4018400,local_repair,0.0
+ConsistXApp expl,50,49,235302600,local_repair,0.0
+CP-SAT,50,50,5549400,full_repair,0.0
+GAC + CP-SAT,50,50,5704400,full_repair,0.0
+GAC + expl repair,50,50,3068000,local_repair,0.0
+ConsistXApp expl,50,50,265666200,direct,0.0
+CP-SAT,50,51,4048100,full_repair,0.0
+GAC + CP-SAT,50,51,4076200,full_repair,0.0
+GAC + expl repair,50,51,2289800,local_repair,0.0
+ConsistXApp expl,50,51,167734500,local_repair,0.0
+CP-SAT,100,42,12316600,full_repair,0.0
+GAC + CP-SAT,100,42,12160200,full_repair,0.0
+GAC + expl repair,100,42,7439500,local_repair,0.0
+ConsistXApp expl,100,42,647397200,local_repair,0.0
+CP-SAT,100,43,10248400,full_repair,0.0
+GAC + CP-SAT,100,43,11121600,full_repair,0.0
+GAC + expl repair,100,43,11369000,local_repair,0.0
+ConsistXApp expl,100,43,616822000,local_repair,0.0
+CP-SAT,100,44,12513400,full_repair,0.0
+GAC + CP-SAT,100,44,12849400,full_repair,0.0
+GAC + expl repair,100,44,10337500,local_repair,0.0
+ConsistXApp expl,100,44,836544400,local_repair,0.0
+CP-SAT,100,45,12339900,full_repair,0.0
+GAC + CP-SAT,100,45,12768600,full_repair,0.0
+GAC + expl repair,100,45,12822400,local_repair,0.0
+ConsistXApp expl,100,45,692915700,direct,0.0
+CP-SAT,100,46,15515600,full_repair,0.0
+GAC + CP-SAT,100,46,15789700,full_repair,0.0
+GAC + expl repair,100,46,13412500,local_repair,0.0
+ConsistXApp expl,100,46,950749700,local_repair,0.0
+CP-SAT,100,47,12688300,full_repair,0.0
+GAC + CP-SAT,100,47,13010000,full_repair,0.0
+GAC + expl repair,100,47,8761100,local_repair,0.0
+ConsistXApp expl,100,47,823627600,direct,0.0
+CP-SAT,100,48,9883000,full_repair,0.0
+GAC + CP-SAT,100,48,10356800,full_repair,0.0
+GAC + expl repair,100,48,6202300,local_repair,0.0
+ConsistXApp expl,100,48,529801100,direct,0.0
+CP-SAT,100,49,10980500,full_repair,0.0
+GAC + CP-SAT,100,49,11356100,full_repair,0.0
+GAC + expl repair,100,49,6985300,local_repair,0.0
+ConsistXApp expl,100,49,610798000,direct,0.0
+CP-SAT,100,50,12474400,full_repair,0.0
+GAC + CP-SAT,100,50,12686700,full_repair,0.0
+GAC + expl repair,100,50,9425200,local_repair,0.0
+ConsistXApp expl,100,50,701893400,direct,0.0
+CP-SAT,100,51,10880800,full_repair,0.0
+GAC + CP-SAT,100,51,11165000,full_repair,0.0
+GAC + expl repair,100,51,6080900,local_repair,0.0
+ConsistXApp expl,100,51,618182900,direct,0.0
+CP-SAT,200,42,22894000,full_repair,0.0
+GAC + CP-SAT,200,42,24575400,full_repair,0.0
+GAC + expl repair,200,42,18632200,local_repair,0.0
+ConsistXApp expl,200,42,1252865200,local_repair,0.0
+CP-SAT,200,43,23315800,full_repair,0.0
+GAC + CP-SAT,200,43,24465800,full_repair,0.0
+GAC + expl repair,200,43,14282600,local_repair,0.0
+ConsistXApp expl,200,43,1307388000,local_repair,0.0
+CP-SAT,200,44,23060500,full_repair,0.0
+GAC + CP-SAT,200,44,24475600,full_repair,0.0
+GAC + expl repair,200,44,15882900,local_repair,0.0
+ConsistXApp expl,200,44,1273036500,local_repair,0.0
+CP-SAT,200,45,22259900,full_repair,0.0
+GAC + CP-SAT,200,45,23607500,full_repair,0.0
+GAC + expl repair,200,45,15038300,local_repair,0.0
+ConsistXApp expl,200,45,1403269500,local_repair,0.0
+CP-SAT,200,46,20692800,full_repair,0.0
+GAC + CP-SAT,200,46,21582600,full_repair,0.0
+GAC + expl repair,200,46,14101100,local_repair,0.0
+ConsistXApp expl,200,46,1257910600,local_repair,0.0
+CP-SAT,200,47,19988300,full_repair,0.0
+GAC + CP-SAT,200,47,20799000,full_repair,0.0
+GAC + expl repair,200,47,11467400,local_repair,0.0
+ConsistXApp expl,200,47,1066418400,local_repair,0.0
+CP-SAT,200,48,24122900,full_repair,0.0
+GAC + CP-SAT,200,48,26361200,full_repair,0.0
+GAC + expl repair,200,48,15355600,local_repair,0.0
+ConsistXApp expl,200,48,1363520700,local_repair,0.0
+CP-SAT,200,49,30496300,full_repair,0.0
+GAC + CP-SAT,200,49,27947900,full_repair,0.0
+GAC + expl repair,200,49,29500100,local_repair,0.0
+ConsistXApp expl,200,49,1732474600,direct,0.0
+CP-SAT,200,50,19890000,full_repair,0.0
+GAC + CP-SAT,200,50,20892500,full_repair,0.0
+GAC + expl repair,200,50,13194100,local_repair,0.0
+ConsistXApp expl,200,50,1158689400,local_repair,0.0
+CP-SAT,200,51,26492000,full_repair,0.0
+GAC + CP-SAT,200,51,27429600,full_repair,0.0
+GAC + expl repair,200,51,28242000,local_repair,0.0
+ConsistXApp expl,200,51,1698368400,direct,0.0
+CP-SAT,500,42,53030500,full_repair,0.0
+GAC + CP-SAT,500,42,55146400,full_repair,0.0
+GAC + expl repair,500,42,39941400,local_repair,0.0
+ConsistXApp expl,500,42,3205646400,local_repair,0.0
+CP-SAT,500,43,53307700,full_repair,0.0
+GAC + CP-SAT,500,43,55481100,full_repair,0.0
+GAC + expl repair,500,43,36688500,local_repair,0.0
+ConsistXApp expl,500,43,3039927400,local_repair,0.0
+CP-SAT,500,44,57107500,full_repair,0.0
+GAC + CP-SAT,500,44,60216500,full_repair,0.0
+GAC + expl repair,500,44,38248600,local_repair,0.0
+ConsistXApp expl,500,44,3479174500,local_repair,0.0
+CP-SAT,500,45,56240500,full_repair,0.0
+GAC + CP-SAT,500,45,61617200,full_repair,0.0
+GAC + expl repair,500,45,39880000,local_repair,0.0
+ConsistXApp expl,500,45,3555372500,local_repair,0.0
+CP-SAT,500,46,55657400,full_repair,0.0
+GAC + CP-SAT,500,46,59480200,full_repair,0.0
+GAC + expl repair,500,46,61685400,local_repair,0.0
+ConsistXApp expl,500,46,3574002500,local_repair,0.0
+CP-SAT,500,47,58487300,full_repair,0.0
+GAC + CP-SAT,500,47,61874900,full_repair,0.0
+GAC + expl repair,500,47,48822200,local_repair,0.0
+ConsistXApp expl,500,47,3637903300,direct,0.0
+CP-SAT,500,48,52790000,full_repair,0.0
+GAC + CP-SAT,500,48,56408700,full_repair,0.0
+GAC + expl repair,500,48,61826800,local_repair,0.0
+ConsistXApp expl,500,48,3365241100,local_repair,0.0
+CP-SAT,500,49,52254200,full_repair,0.0
+GAC + CP-SAT,500,49,54837700,full_repair,0.0
+GAC + expl repair,500,49,42037500,local_repair,0.0
+ConsistXApp expl,500,49,2904358600,local_repair,0.0
+CP-SAT,500,50,49478000,full_repair,0.0
+GAC + CP-SAT,500,50,53208800,full_repair,0.0
+GAC + expl repair,500,50,61402200,local_repair,0.0
+ConsistXApp expl,500,50,2986489700,local_repair,0.0
+CP-SAT,500,51,50620500,full_repair,0.0
+GAC + CP-SAT,500,51,53968600,full_repair,0.0
+GAC + expl repair,500,51,68776600,local_repair,0.0
+ConsistXApp expl,500,51,2952376600,local_repair,0.0

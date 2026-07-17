@@ -1,67 +1,49 @@
-# État du Projet : Gestion des Conflits xApp O-RAN (VeriXApp)
+# État du Projet OpenRAN (ConsistXApp)
 
-Ce fichier offre une vue détaillée du contexte, de l'objectif, de l'architecture logicielle et du contenu exact du projet.
+Ce document décrit de A à Z le projet **OpenRAN** (dont la méthode principale est nommée **ConsistXApp**). Il vise à fournir une vue d'ensemble exhaustive du contexte, des objectifs scientifiques, de l'architecture du code, et de l'état actuel de l'avancement.
 
-## 1. Contexte et Objectif du Projet
-Ce projet implémente et évalue **VeriXApp**, un framework hybride conçu pour la gestion et la résolution des conflits entre les applications étendues (xApps) au sein du contrôleur intelligent (RIC) en quasi-temps réel (near-real-time) dans une architecture **O-RAN (Open Radio Access Network)**.
+---
 
-L'objectif principal est de diagnostiquer et réparer les *"stalls fractionnaires"* (blocages continus) qui surviennent lorsque plusieurs xApps formulent des requêtes de contrôle concurrentes sur le réseau (ex. contrôle de puissance, équilibrage de charge, économie d'énergie). L'approche combine :
-1. **L'inférence marginale continue** : coordonne les xApps de manière continue.
-2. **Détection de points fixes fractionnaires** : détecte quand la configuration devient instable lors de l'arrondi probabiliste.
-3. **Réparation locale exacte (CP-SAT)** : extrait un sous-problème induit par le conflit et le résout de façon exacte à l'aide de Google OR-Tools.
-4. **Vérification indépendante** : s'assure qu'aucune action conflictuelle ou violant un SLA n'est appliquée sur le réseau physique.
+## 1. Contexte et Objectif Principal
 
-Ce travail a abouti à la rédaction d'un article scientifique destiné au journal *Annals of Telecommunications*.
+Le projet s'inscrit dans le domaine des réseaux **O-RAN (Open Radio Access Network)** et se concentre sur la gestion des conflits entre **xApps** fonctionnant sur le contrôleur intelligent (near-real-time RIC).
+L'objectif est d'arbitrer les requêtes concurrentes de différentes xApps qui pourraient être mutuellement incompatibles, en compétition pour des ressources partagées, ou en violation des SLA (Service-Level Agreements).
 
-**Mise à jour (audit et correction, juillet 2026).** Le pipeline expérimental et le manuscrit contenaient des incohérences majeures (résultats contredits par les données, valeurs physiquement impossibles, texte corrompu par un script d'injection regex). Les corrections apportées :
-- **Générateur d'instances** (`simulator.py`) : plantation d'une solution faisable garantie (les instances étaient auparavant majoritairement infaisables, plafonnant CP-SAT lui-même à ~20%) + noms de variables encodant le type d'action.
-- **Modèle KPI réseau** : `compute_kpis` répond désormais réellement à la décision choisie (les KPIs étaient identiques pour toutes les méthodes).
-- **Réparation** (`verixapp.py`/`repair.py`) : réparation locale exacte avec escalade des hops (0 réparation réussissait avant ; 38/38 désormais).
-- **Résultats honnêtes régénérés** : Continuous-only 74,7% faisable (25% de stalls), VeriXApp et CP-SAT 100%. VeriXApp n'améliore PAS la latence face à CP-SAT (rapide et complet à cette échelle) ; sa valeur est le diagnostic des stalls et la garantie de vérification. Intégrité : 0 violation sur 750 décisions.
-- `fill_paper.py` (script regex qui corrompait `main.tex`) a été neutralisé ; il n'écrit plus que le fragment `main_results.tex`.
+Pour ce faire, le projet modélise la coordination multi-xApp comme un problème dynamique d'optimisation sous contraintes à domaines finis (Dynamic Constraint Satisfaction/Optimization Problem).
 
-Toutes les tables/figures/abstract/conclusion ont été réalignées sur les CSV réels et le PDF recompile proprement.
+## 2. La Méthodologie ConsistXApp
 
-## 2. Structure et Détails du Code
+La solution développée, **ConsistXApp**, est un framework de coordination basé sur la cohérence (consistency-guided framework) organisé en cinq étapes :
 
-### `experiments/`
-Ce dossier contient l'intégralité du simulateur Python conçu pour modéliser le contrôleur O-RAN et tester la méthode VeriXApp face à d'autres méthodes de référence.
+1. **Modélisation dynamique à domaines finis** des actions candidates des xApps.
+2. **Propagation incrémentale (GAC - Generalized Arc Consistency)** pour éliminer de manière sûre les actions qui violent les contraintes dures.
+3. **Inférence continue conditionnée par les relations** sur les domaines filtrés.
+4. **Diagnostic des blocages fractionnaires** et **réparation exacte guidée par les explications** (lorsqu'une assignation reste invalide malgré un point fixe non vide de la propagation).
+5. **Vérification indépendante** avant d'envoyer toute décision à l'interface E2.
 
-#### Le Cœur du Framework (`experiments/src/`)
-- `models.py` : Définit la modélisation mathématique du problème en tant que Problème d'Optimisation de Contraintes (COP). On y trouve les classes `Variable` (actions xApp) et `Constraint` (conflits directs, indirects et implicites).
-- `simulator.py` : Un générateur d'instances synthétiques O-RAN permettant de créer des réseaux de cellules, d'utilisateurs et de xApps avec différentes densités de conflits.
-- `verifier.py` : L'entité de vérification indépendante de bout en bout qui garantit que les règles strictes (SLA, contraintes matérielles) ne sont jamais violées par les décisions finales.
+## 3. Architecture du Dépôt
 
-#### Les Solveurs (`experiments/solvers/`)
-- `continuous.py` : L'algorithme central d'inférence continue. Il calcule les pondérations géométriques conditionnées, applique la polarisation, et inclut la logique pour détecter l'état de `Fractional Stall`.
-- `repair.py` : L'adaptateur de réparation exacte via le solveur **OR-Tools CP-SAT**. Il extrait le cœur du conflit ("repair core") et génère une assignation valide minimisant l'impact sur l'état du réseau.
-- `verixapp.py` : Le pipeline complet combinant `continuous.py`, `repair.py` et la vérification finale.
-- `baselines.py` : Implémentations de comparaison :
-  - **Uncoordinated** : Aucune coordination.
-  - **Static Priority** : Coordination basée sur des priorités strictes fixées par l'opérateur.
-  - **CP-SAT (pure)** : Résolution globale exacte (efficace mais parfois trop lente pour les contraintes en quasi-temps réel).
+Le dépôt est structuré pour séparer la rédaction scientifique, le code métier, les protocoles de test et les résultats :
 
-#### Les Scénarios Expérimentaux (`experiments/scenarios/`)
-Ils reproduisent avec précision les 5 typologies de conflits définies dans l'étude :
-- `s1_power_conflict.py` : Conflit Direct (Augmentation de couverture vs Économie d'énergie sur la puissance d'émission).
-- `s2_resource_conflict.py` : Conflit Indirect sur l'allocation des blocs de ressources radio.
-- `s3_mobility_energy.py` : Conflit de Mobilité et Énergie (Mise en veille d'une cellule avec un offset de handover agressif).
-- `s4_load_balancing.py` : Conflit d'équilibrage de charge réseau.
-- `s5_stress_test.py` : Un test d'effort extrême avec de multiples xApps (5 par cellule) et des densités de conflits massives.
+*   **Livrable Scientifique (Manuscrit)** :
+    *   `main3.tex`, `main3.pdf` : L'article de recherche (version 3) ciblant les *Annals of Telecommunications*.
+    *   `references.bib`, `sn-jnl.cls`, `sn-mathphys-num.bst` : Dépendances et bibliographie LaTeX (format Springer Nature).
+*   **`src/` (Code Source de la Méthode)** :
+    *   Contient les modules d'optimisation, de modèles réseaux, de propagation, de réparation, et le vérificateur formel indépendant.
+*   **`experiments/` (Bancs d'essais)** :
+    *   Définition des scénarios (statiques et dynamiques), solveurs de référence, et données d'évaluation. C'est ici que sont évaluées les performances temporelles (sous une contrainte stricte de 100ms) et l'utilité télécom.
+*   **`scripts/` (Automatisation et Traitement)** :
+    *   Nombreux scripts Python (`generate_figures.py`, `check_metrics.py`, `run_dynamic.py`, `inject_latex.py`, etc.) servant à lancer les expériences, extraire les métriques, générer les graphiques, et les injecter directement dans le code LaTeX.
+*   **`artifacts/` (Ressources Générées)** :
+    *   Stocke les figures, tables et données brutes produites par les scripts et intégrées dans le PDF final.
+*   **`Protocole.md`** :
+    *   Un document critique définissant le protocole expérimental complet (MIRAGE-R), les limites éthiques de validation, et les six garanties scientifiques évaluées (correction, utilité, respect du budget temps, reproductibilité, etc.).
 
-#### Exécution et Évaluation (`experiments/evaluation/`)
-- `runner.py` : Script principal qui exécute de manière automatisée tous les scénarios et toutes les baselines sur de multiples essais, afin d'en extraire la latence, la viabilité, et les occurrences de stall.
-- `report.py` : Script d'agrégation qui compile les statistiques brutes (`raw_results.csv`) en tableaux formatés prêts pour LaTeX (`main_results.tex`).
-- `fill_paper.py` : Un script Python sur mesure utilisant des expressions régulières pour injecter directement et proprement les résultats finaux dans le fichier source LaTeX de l'article (remplacement des blocs `\TODO`).
+## 4. Résultats et État d'Avancement
 
-### Résultats de Simulation (`experiments/results/`)
-- `raw_results.csv` : Base de données de simulation brute pour chaque méthode, chaque scénario et chaque essai.
-- `main_results.csv` : Statistiques agglomérées (latence médiane, latence au 95ème centile, taux de blocage, taux de viabilité).
-- `main_results.tex` : Code LaTeX généré reprenant les métriques à inclure directement dans le manuscrit.
+*   **Campagne d'évaluation** : Le framework a été validé sur 15 000 époques de décision uniques pour dix méthodes, produisant 150 000 observations.
+*   **Performances** : La propagation GAC réduit l'espace de recherche (réduction de 21.7% des valeurs et 34.1% des tuples), ce qui diminue significativement la taille du cœur de réparation exacte. ConsistXApp atteint une faisabilité de 74.4% et respecte les délais stricts (deadline compliance) dans 56.8% des cas sous 100ms.
+*   **Prochaines Étapes** : Le manuscrit `main3` (intégrant la méthode ConsistXApp par rapport à l'ancienne legacy VeriXApp) est la version la plus récente et constitue le livrable final attendu de ce dépôt.
 
-## 3. Dossier Racine (Manuscrit LaTeX)
-- `main.tex` : Le manuscrit source de l'article, formaté pour *Springer Nature* (`sn-jnl.cls`). Le code a été mis à jour par script et contient désormais toutes les métriques tirées des expérimentations.
-- `main.pdf` : Le rendu final en PDF compilé avec succès et sans avertissements critiques.
-- `references.bib` & `sn-mathphys-num.bst` : Les références bibliographiques et le style défini par l'éditeur.
-- `Protocole.md` : Fichier de demande initiale (resté vierge).
-- `STATE.md` : Ce présent document, qui décrit en détail l'organisation et la raison d'être de chaque module du projet.
+---
+*Ce document sert de point de repère pour comprendre l'écosystème global du projet, des aspects théoriques jusqu'à l'implémentation et la rédaction de l'article de recherche.*

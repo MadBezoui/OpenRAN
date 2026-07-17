@@ -1,0 +1,16 @@
+{
+ "G1_exhaustive": {
+  "instances": 200,
+  "assignments": 24260,
+  "divergences": 0,
+  "time_s": 0.0,
+  "pass": true
+ },
+ "G2_triple_agreement": {
+  "assignments": 1800,
+  "divergences": 0,
+  "time_s": 0.4,
+  "pass": true
+ },
+ "gates_pass": true
+}
