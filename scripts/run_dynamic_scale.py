@@ -32,6 +32,58 @@ FIELDS = ["method", "n", "delta", "seed", "epoch", "changed_rels",
           "violated_rels", "total_ms", "build_ms", "solve_ms", "verified"]
 
 
+
+import itertools
+class PersistentCPSAT:
+    def __init__(self, variables, domains):
+        self.model = cp_model.CpModel()
+        self.cp_vars = {}
+        self.domains = domains
+        for v in variables:
+            dom = domains[v.id].base_values
+            self.cp_vars[v.id] = self.model.NewIntVar(min(dom), max(dom), f"v{v.id}")
+        self.rels = {} # sig -> literal
+        self.solver = cp_model.CpSolver()
+        self.solver.parameters.num_search_workers = 1
+
+    def solve(self, relations, hint=None, time_limit_ms=10000):
+        t0 = time.monotonic_ns()
+        active_literals = []
+        for r in relations:
+            if not r.is_hard: continue
+            sig = (tuple(r.scope), frozenset(r.allowed_tuples))
+            if sig not in self.rels:
+                b = self.model.NewBoolVar(f"r{len(self.rels)}")
+                self.rels[sig] = b
+                scope_vars = [self.cp_vars[v] for v in r.scope] + [b]
+                tuples = []
+                for t in r.allowed_tuples:
+                    tuples.append(list(t) + [1])
+                doms = [self.domains[v].base_values for v in r.scope]
+                for t in itertools.product(*doms):
+                    tuples.append(list(t) + [0])
+                self.model.AddAllowedAssignments(scope_vars, tuples)
+            active_literals.append(self.rels[sig])
+            
+        t_build = time.monotonic_ns() - t0
+        self.model.ClearHints()
+        if hint:
+            for vid, val in hint.items():
+                self.model.AddHint(self.cp_vars[vid], val)
+                
+        self.solver.parameters.max_time_in_seconds = time_limit_ms / 1000.0
+        t1 = time.monotonic_ns()
+        self.model.ClearAssumptions()
+        self.model.AddAssumptions(active_literals)
+        status = self.solver.Solve(self.model)
+        t_solve = time.monotonic_ns() - t1
+        
+        sol = None
+        if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            sol = {vid: self.solver.Value(var) for vid, var in self.cp_vars.items()}
+        return sol, (time.monotonic_ns() - t0) / 1e6, t_build / 1e6, t_solve / 1e6
+
+
 def solve_full_cpsat(variables, domains, relations, hint=None,
                      time_limit_ms=10000):
     t0 = time.monotonic_ns()
@@ -113,10 +165,13 @@ def main():
                         n, a.d, 2.0, 0.25, seed=seed)
                     rng = random.Random(seed * 7919)
                     # initial solve shared by all methods (epoch 0, excluded)
+                    
                     base_sol, _, _, _ = solve_full_cpsat(V, D, R)
                     assert base_sol is not None
+                    persistent_solver = PersistentCPSAT(V, D)
+
                     prev = {m: dict(base_sol) for m in
-                            ("cpsat_rebuild", "cpsat_hint", "incr_repair")}
+                            ("cpsat_rebuild", "cpsat_hint", "incr_repair", "cpsat_persistent")}
                     for ep in range(1, a.epochs + 1):
                         changed = perturb_relations(
                             R, planted, delta, a.d, rng,
@@ -149,6 +204,20 @@ def main():
                                     "verified": ok})
                         if ok:
                             prev["cpsat_hint"] = sol
+                        
+                        # persistent
+                        sol, ms, bms, sms = persistent_solver.solve(R, hint=prev["cpsat_persistent"])
+                        ok = sol is not None and ver.verify(sol, "d", "d")
+                        w.writerow({"method": "cpsat_persistent", "n": n,
+                                    "delta": delta, "seed": seed, "epoch": ep,
+                                    "changed_rels": len(changed),
+                                    "violated_rels": -1,
+                                    "total_ms": round(ms, 3),
+                                    "build_ms": round(bms, 3),
+                                    "solve_ms": round(sms, 3),
+                                    "verified": ok})
+                        if ok:
+                            prev["cpsat_persistent"] = sol
                         # incremental local repair
                         sol, ms, nviol, ok = incr_repair_epoch(
                             V, D, R, ver, prev["incr_repair"])

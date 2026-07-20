@@ -33,6 +33,72 @@ REPAIR_FIELDS = ["initial_core_size", "final_core_size", "expansions",
                  "full_scope_required", "status"]
 
 
+
+def decode_greedy_fc(variables, D, R):
+    assign = {}
+    order = sorted(v.id for v in variables)
+    inc = {vid: [r for r in R if vid in r.scope] for vid in order}
+    for vid in order:
+        chosen = None
+        for val in sorted(D[vid].base_values):
+            ok = True
+            for r in inc[vid]:
+                if all((sv in assign or sv == vid) for sv in r.scope):
+                    tup = tuple(val if sv == vid else assign[sv] for sv in r.scope)
+                    if not r.is_allowed(tup):
+                        ok = False; break
+            if ok:
+                chosen = val; break
+        assign[vid] = chosen if chosen is not None else sorted(D[vid].base_values)[0]
+    return assign
+
+def decode_fc_search(variables, D, R, budget_ms=50):
+    import time
+    order = sorted(v.id for v in variables)
+    binrels = {}
+    for r in R:
+        if len(r.scope) == 2:
+            binrels.setdefault(r.scope[0], []).append(r)
+            binrels.setdefault(r.scope[1], []).append(r)
+    dom = {vid: list(sorted(D[vid].base_values)) for vid in order}
+    assign = {}
+    t0 = time.monotonic_ns()
+    def consistent(vid, val):
+        for r in binrels.get(vid, []):
+            other = r.scope[0] if r.scope[1] == vid else r.scope[1]
+            if other in assign:
+                tup = tuple(val if s == vid else assign[s] for s in r.scope)
+                if not r.is_allowed(tup): return False
+        return True
+    def bt(i, curdom):
+        if (time.monotonic_ns() - t0)/1e6 > budget_ms: return None
+        if i == len(order): return dict(assign)
+        vid = order[i]
+        for val in curdom[vid]:
+            if not consistent(vid, val): continue
+            assign[vid] = val
+            newdom = {k: list(v) for k, v in curdom.items()}
+            dead = False
+            for r in binrels.get(vid, []):
+                other = r.scope[0] if r.scope[1] == vid else r.scope[1]
+                j = order.index(other) if other in order else -1
+                if other in assign or j <= i: continue
+                keep = []
+                for ov in newdom[other]:
+                    tup = tuple(val if s == vid else (ov if s == other else assign.get(s)) for s in r.scope)
+                    if r.is_allowed(tup): keep.append(ov)
+                newdom[other] = keep
+                if not keep: dead = True; break
+            if not dead:
+                res = bt(i+1, newdom)
+                if res is not None: return res
+            del assign[vid]
+        return None
+    res = bt(0, dom)
+    if res is None:
+        return decode_greedy_fc(variables, D, R)
+    return res
+
 def run_pipeline(variables, base_domains, relations, context_id, verifier,
                  config: Dict[str, Any], deadline_ms: int = 100) -> Dict[str, Any]:
     m = {"propagation_time_ns": 0, "continuous_time_ns": 0, "repair_time_ns": 0,
@@ -60,13 +126,32 @@ def run_pipeline(variables, base_domains, relations, context_id, verifier,
     # safe fallback (registered): first base value of each variable
     fallback = {v.id: base_domains[v.id].base_values[0] for v in variables}
 
+
     def finish(decoded, executed, outcome):
         m["decoded"] = decoded
         m["_executed"] = executed
         m["outcome"] = outcome
         m["executed_verified"] = executed is not None
-        m["total_time_ns"] = time.monotonic_ns() - t0
+        
+        # Generate Certificate
+        cert_overhead = 0
+        cert_size = 0
+        if executed is not None:
+            ok, cert = verifier.verify(executed, context_id, context_id, return_cert=True)
+            if ok:
+                cert_overhead = cert["overhead_ns"]
+                cert_size = cert["size_bytes"]
+        else:
+            ok, cert = verifier.verify(fallback, context_id, context_id, return_cert=True)
+            if ok:
+                cert_overhead = cert["overhead_ns"]
+                cert_size = cert["size_bytes"]
+        
+        m["cert_overhead_ns"] = cert_overhead
+        m["cert_size_bytes"] = cert_size
+        m["total_time_ns"] = (time.monotonic_ns() - t0) + cert_overhead
         return m
+
 
     # ----- non-coordinated decodes -----
     if config["decode"] == "random":
@@ -82,6 +167,14 @@ def run_pipeline(variables, base_domains, relations, context_id, verifier,
             m["raw_verified"] = True; m["optimized_verified"] = True
             return finish(decoded, decoded, "direct")
         return _fallback(m, fallback, verifier, context_id, decoded, finish)
+
+    
+    if config["decode"] == "forward_check":
+        decoded = decode_fc_search(variables, base_domains, [r.relation for r in active])
+        m["raw_verified"] = verifier.verify(decoded, context_id, context_id)
+        if m["raw_verified"]:
+            m["optimized_verified"] = True
+            return finish(decoded, decoded, "direct")
 
     # ----- 1. GAC -----
     if config["gac"]:

@@ -1,172 +1,358 @@
-# Auto-Review of the revised manuscript, no need to  letter of response, check each recommandation before correcting on main5.tex
+# Auto-Review of the revised manuscript, no need to  letter of response, check each recommandation before correcting on main6.tex
 
 
-ScoresTable
-Criterion	Score /5	Comment
-Originality / Novelty	2.5	Explicitly an integration of established CP mechanisms (incremental GAC, explanations, assumption cores, LNS-style repair); the O-RAN arbitration framing is the main novelty
-Technical soundness	4.0	Formal statements are correct but trivial; statistical protocol is unusually rigorous (paired tests, Holm, BCa, effect sizes, inferential-unit choice)
-Experimental validation	3.0	Extensive within synthetic scope; no emulator, no real O-RAN data, weak-decoder-driven headline, tail results undermine the latency story
-Significance	3.0	Honest negative/mixed results are genuinely useful to the community; practical impact limited to a narrow sequential regime
-Clarity / Writing	3.5	Well organized, but over-hedged to the point of redundancy; limitations stated 4–5 times across the paper
-Related work	3.0	Good O-RAN coverage; the dynamic-CSP literature (AC|DC, DnAC-4, fine-grained restoration) is cited only ancestrally and never compared against
-Reproducibility	5.0	Artifact, seed hierarchy, manifests, exact solver configs — exemplary
-Overall: 3.2/5
-Strengths
+# Reviewer Report
 
-    Exceptional intellectual honesty. Reporting no cold-start advantage, p95/p99 tail convergence, a 10.8 pp objective-quality cost, and a counterproductive continuous-relaxation stage is rare and valuable. This is the paper's defining virtue.
-    Verifier engineering and validation (4 gates, 680,450 checks, zero divergence, model-version binding) is solid systems work.
-    Statistical methodology is among the best I have seen in this area: episode as inferential unit, exact tests, effect sizes, explicit correction families (Table 4), censoring of timeouts, refusal to over-interpret p99 from ~3 observations.
-    Rich ablations (8 repair-core strategies, 4 decoders, drift variant) and clean separation of feasibility vs. optimality (lex-optimal vs. feasible-not-certified).
+## 1. Overall assessment
 
-Major comments
-M1. The headline repair story is manufactured by a deliberately weak decoder.
-The utility decoder produces 248/250 repair cases; forward checking reduces this to 35. The entire static campaign, the repair ablation, and the "248 repairs" narrative are built on the weakest candidate generator, and the sequential campaign was not rerun with a conflict-aware decoder. Restructure: make conflict-aware decoding + verified repair the main pipeline, demote the utility-decoder ablation to a diagnostic.
-M2. The sequential latency advantage is largely an implementation artifact — and vanishes in the tail.
-At n=1000 the baseline spends 6.9/25.6 ms on Python model construction. The comparison is honestly framed as "rebuild-and-resolve Python CP-SAT," but then the contribution reduces to "avoiding Python overhead," not an algorithmic advance. Worse: p95 (30.6 vs 31.2 ms) and p99 (~84 vs 33 ms) show incremental repair is worse in the tail, and at δ=10% the p95 is 59.6 vs 27.1 ms. The method wins the median and loses the tail — for a latency-motivated RIC setting, this is close to a negative result. You need (a) a persistent/assumption-based solver baseline (warm-started CP-SAT, or a C++ path), and (b) an explicit escalation policy when the repair core grows.
-M3. No decision-relevant result. All latencies (1.8–25.6 ms medians) sit far below the 10 ms–1 s Near-RT loop. The paper never exhibits a regime where CP-SAT violates the deadline and ConsistXApp meets it. As presented, the pipeline solves a latency problem that does not bind in the tested regime, and loses exactly where it would bind (large n, tails). Identify and evaluate the regime where the baseline actually fails.
-M4. No comparison with the dynamic-AC literature. Restoration here is coarse (whole constraint-graph component). Established finer-grained dynamic arc-consistency maintenance/restoration schemes (descending from Bessière 1991, AC|DC, DnAC-4) are neither used nor benchmarked; "incremental vs. full recomputation" (Table 11) is a straw baseline in the CP literature. Either position as engineering (fine) or compare algorithmically.
-M5. Synthetic-only O-RAN validity. ColO-RAN, OpenRAN Gym and FlexRIC are cited but unused; the pseudo-physical model is a toy; KPM analysis (§7.9) is explicitly non-inferential. For any networking venue this is the decisive weakness. At minimum: closed-loop evaluation on one cited emulator, or a pre-specified paired non-inferiority margin for KPMs. Otherwise §7.9 should be removed — descriptive overlapping CIs add nothing.
-M6. Propositions 1–4 are folklore presented as analysis. Prop. 1 is near-tautological ("assume the verifier accepts exactly F(st)… then forwarded actions are in F(st)"); Prop. 2 is textbook GAC soundness; Props. 3–4 are immediate. Either compress to remarks, or strengthen (e.g., prove the concrete checker correctly implements set membership — that would be a real theorem tied to your G1–G4 gates).
-Minor comments
+This manuscript presents **ConsistXApp**, a multi-xApp arbitration architecture for the O-RAN Near-RT RIC. Its main contribution is not a new constraint-programming algorithm, but the integration of:
 
-    Reference [20] contains an unresolved "???" in the publisher field ("Schloss Dagstuhl–Leibniz-Zentrum für Informatik, ??? (2023)") — fix before resubmission.
-    Table 7: "Uncoordinated" and "Static priority" are blocked 250/250 by construction (no verifier). Reframe as sanity checks, not methods.
-    Consolidate the limitations. The same caveats (registered-model relativity, Python-implementation scope, tail caution) appear in the abstract, introduction, results, and §8 — state once, reference thereafter.
-    The abstract is overlong and defensive; keep the honesty but cut ~30%.
-    Notation density is high; add a notation table.
-    Certificate serialization size/replay latency are acknowledged as unmeasured — given certificates are a claimed contribution, measure them.
-    n=10 episodes is the bare minimum for the exact Wilcoxon (p floor 0.001953); add episodes or acknowledge fragility beyond the current caveat.
-    Declared GenAI use and reproducibility artifact: good practice, keep.
+1. incremental generalized arc consistency;
+2. explanation-guided expanding repair cores;
+3. CP-SAT-based repair and lexicographic optimization;
+4. an independently implemented forwarding verifier;
+5. model-version binding; and
+6. replayable audit certificates.
 
-Questions to the authors
+The topic is relevant to *Annals of Telecommunications*, which publishes original telecommunications research, and the manuscript addresses an important problem in programmable O-RAN control. The paper is technically substantial, unusually explicit about limitations, and supported by an extensive synthetic evaluation.
 
-    Why was the operational pipeline not built on the conflict-aware decoder from the start? What are end-to-end sequential results with forward-checking + repair?
-    Can you demonstrate one configuration where complete CP-SAT misses the 100 ms budget and ConsistXApp does not?
-    Why full-component restoration rather than a finer-grained dynamic-AC restoration? What is the overhead difference?
-    What is the certificate size and replay latency per decision?
+However, the current version does not yet provide sufficiently strong evidence for several of its central systems claims. In particular:
 
-Fit assessment (frank)
+- the sequential latency comparison is limited to a Python rebuild-and-resolve CP-SAT baseline;
+- verification, certificate construction, serialization, and E2 transport are excluded from the principal latency figures;
+- the version-bound atomic forwarding mechanism is specified but not implemented or experimentally tested;
+- the audit certificate is replayable but not demonstrably tamper-evident;
+- the evaluation is entirely synthetic and structurally favourable to local repair;
+- the currently accessible artifact does not clearly contain all the material claimed in the data-availability statement;
+- there is at least one serious contradiction concerning solver determinism and worker count.
 
-    Networking journal (TNSM, Trans. Green Comms. & Networking): Reject risk high — synthetic-only O-RAN evidence will not survive. Needs emulator validation.
-    CP/AI venue (Constraints, CP conference): Reject risk high on novelty — the mechanisms are established; integration + honest benchmarking may fit a Constraints application track with M4 addressed.
-    Mid-tier Springer telecom/applied journal (e.g., Annals of Telecommunications): viable after Major Revision — probability as-is ≈ 35%, after addressing M1–M3 + M5 ≈ 70%.
+The paper is potentially publishable after substantial correction and strengthening.
 
-The paper's honesty is publishable in itself; its current positioning — a latency-motivated method that wins medians and loses tails against a straw baseline — is not yet.
- How to enhance it?
-Copy
-Share
-Sellable Core Verifier Certificate Honest Regime Characterization for Proposed System
-The user asks "How to enhance it?" — i.e., how to improve the paper. Based on my review, I should provide a structured, actionable enhancement plan. The user's memory shows they like TODO lists, comparison tables, detailed actionable plans, "Actual Text / Correct text" style corrections, and frank assessments. In a past conversation they asked for "a realisable plan to make Paper 2 better than Paper 1" and "write a TODO.md plan without reference to paper, without duration of tasks, give more details."
-Here they just ask "How to enhance it?" — I should give a prioritized, actionable enhancement plan mapped to my major comments M1–M6 and minor issues. No need for a file unless asked — previous turns delivered in-chat. Keep it in chat, structured, prioritized by impact on acceptance probability. Include concrete experiments to add, restructuring moves, writing fixes, and what to claim/not claim. Maybe include a table mapping weakness → action → expected payoff → effort. Also a revised contribution framing/title/abstract suggestions.
-Let me be specific and realistic:
-Priority A (decision-changing):
+---
 
-    Fix the decoder issue (M1): rerun static + sequential campaigns with forward-checking/min-conflicts decoder + repair; report repair frequency, latency, quality.
-    Decision-relevant regime (M3): scale until CP-SAT breaks the 100 ms budget (increase n, arity, tightness near phase transition, higher change rates); show crossover where ConsistXApp maintains feasibility/latency and CP-SAT fails; add worst-case/tail metrics with proper inferential treatment (more episodes, dependence-aware CIs).
-    Stronger baseline (M2): persistent CP-SAT via assumptions/reified boundaries, warm starts with hints in a persistent process, or C++ implementation; separate model-construction cost from search cost.
-    Tail-risk policy: escalation rule on core growth (e.g., if |A_r| > θ or core growth rate, abort to full solve or fallback), pre-registered; demonstrate bounded p99.
+## 2. Main strengths
 
-Priority B (validation):
-5. Emulator/closed-loop validation (M5): FlexRIC or ColO-RAN or OpenRAN Gym integration; or at minimum ns-3/Colosseum-derived traces to drive the generator. If infeasible, pre-registered non-inferiority KPM test and tone down O-RAN claims; or reposition venue.
-6. Dynamic-AC comparison (M4): implement or cite-compare finer-grained restoration; or reposition explicitly as systems integration and drop "incremental GAC" novelty phrasing.
-Priority C (theory):
-7. Compress Props 1–4 or strengthen Prop 1 into a real checker-correctness theorem (the concrete verifier implements membership in F(st)); add complexity discussion of repair-core expansion vs. LNS.
-Priority D (writing/packaging):
-8. Rewrite abstract (shorter, same honesty); consolidate limitations; retitle maybe ("Verified repair for registered multi-xApp arbitration: an honest broker?"). Suggest new title emphasizing verified/auditable arbitration rather than latency.
-9. Fix ref [20] "???"; notation table; certificate size/replay measurements; Table 7 reframing.
-10. Reframe contributions: from "fast coordination" to "auditable, verified arbitration with characterized operating regime" — the verifier + certificate + honest regime characterization is the sellable core.
-Also give an experiments checklist (E1–E8) with expected outcomes and how each neutralizes a specific reviewer objection. And a revised claims table: claim → current evidence → evidence needed.
-The user might want a TODO.md file? They asked "How to enhance it?" — a structured in-chat plan is appropriate; offer to write it as TODO.md if wanted. Keep in English. Use tables. Frank and direct. Reasonable length — comprehensive but not bloated.
-Enhancement Plan for the ConsistXApp Paper
-Ranked by impact on acceptance probability. A = decision-changing, B = reviewer-critical, C = polishing.
-A. Decision-changing fixes
-A1. Kill the straw-man decoder problem (fixes M1) — highest priority
-The current pipeline is built on a decoder you yourself call "intentionally conflict-unaware," which manufactures 248/250 repair cases. A reviewer will read the headline as engineered.
-Actions:
+### 2.1 Clear separation of guarantees
 
-    Make forward-checking (or min-conflicts) + verified repair the main operational pipeline.
-    Rerun the static suite and the sequential campaign with this decoder (you admit the sequential rerun is missing — this is the first thing a reviewer will demand).
-    Report end-to-end for the new pipeline: latency, repair frequency (expect ~35/250 instead of 248), retained preferences, tail behavior.
-    Demote the utility-decoder results to a clearly-labeled diagnostic ablation.
+The manuscript correctly distinguishes:
 
-Expected outcome: repair becomes a small, credible safety net instead of the main act; the verifier/audit layer — your real contribution — moves to the foreground.
-A2. Produce a decision-relevant result (fixes M3)
-Currently every baseline finishes within 26 ms median against a 100 ms–1 s budget. Nothing in the paper shows a regime where ConsistXApp is needed.
-Actions:
+- registered-model feasibility;
+- physical-RAN safety;
+- availability;
+- timeliness;
+- solver feasibility;
+- solver optimality; and
+- formal verification versus empirical verifier validation.
 
-    Push instance difficulty until complete CP-SAT actually breaks the deadline: larger n (2k–10k), arity 3–5, tightness near the phase-transition region, δ up to 25–50%, domain size varied.
-    Show the crossover figure: x-axis = difficulty parameter, y-axis = % epochs meeting 100 ms (and p99 latency), curves for re-solve vs. incremental repair.
-    This single figure converts your story from "1 ms faster when it doesn't matter" to "still feasible when the baseline fails."
+This is a major strength. The repeated statement that acceptance only means compliance with the registered finite-domain model is scientifically responsible.
 
-A3. Fair baseline + honest decomposition (fixes M2)
-Actions:
+### 2.2 Sound architectural principle
 
-    Add a persistent-solver baseline: CP-SAT kept alive across epochs with assumption literals (you already have the reified boundary machinery — reuse it), or a C++ OR-Tools path, so "rebuild cost" is separated from "search cost."
-    Report the decomposition explicitly: model construction vs. search, per method, per size (you have the numbers at n=1000 — extend across sizes).
-    If incremental repair still wins against the persistent solver in the median, your claim strengthens enormously; if not, the verifier/audit story must carry the paper (see A5).
+Treating every optimizer output as an untrusted proposal until it passes an independent full-model verifier is a sensible and practically relevant design principle.
 
-A4. Bound the tail (fixes the p99 problem)
-Your method loses exactly where latency matters (p95 30.6 vs 31.2; p99 ~84 vs 33; δ=10% p95 59.6 vs 27.1).
-Actions:
+Proposition 1 is mathematically straightforward, but it clearly states the conditions required for forwarding soundness: verifier correctness, exclusive gating, and atomic model-version handling.
 
-    Pre-register an escalation policy: if |Aᵣ| exceeds θ·|A|, or expansion count exceeds k, abort repair → full CP-SAT or verified fallback.
-    Show the policy caps p99 without losing the median advantage.
-    Run ≥30 episodes (not 10) and report dependence-aware tail intervals (block bootstrap over episodes). This also fixes the fragile p=0.001953 floor.
+### 2.3 Strong negative-result reporting
 
-A5. Reframe the contribution (strategic, costs nothing)
-The sellable core is not speed — it is auditable, verified arbitration with a characterized operating regime. Rewrite the contribution claims:
-Table
-Current framing	Reframe to
-Fast incremental coordination	Verified forwarding gate + replayable repair certificates for registered multi-xApp arbitration
-Latency advantage	A precisely delimited regime where incremental repair amortizes (median) + an escalation policy that bounds the tail
-Integration of CP mechanisms	First independently-validated forwarding verifier for xApp arbitration with model-version binding
-A title in that spirit: "Verified and Auditable Multi-xApp Arbitration in the Near-RT RIC: Registered-Model Guarantees and the Limits of Incremental Repair."
-B. Validation upgrades
-B1. Minimum credible O-RAN evidence (fixes M5)
-Pick one, in decreasing order of value:
+The manuscript openly reports that:
 
-    Closed-loop on FlexRIC or ColO-RAN (both cited — use them): even a single scenario with real E2-like message timing transforms the paper's credibility.
-    Drive your generator with traces/parameter distributions extracted from a cited emulator instead of uniform synthetic structure.
-    If neither is feasible before the deadline: add a pre-registered paired non-inferiority test for KPMs (define margin δ before analysis), and strip §7.9 of its current "descriptive CI overlap" non-analysis.
+- there is no cold-start advantage;
+- local repair reduces objective quality;
+- the continuous-relaxation stage is counterproductive;
+- the median advantage disappears near the tail;
+- no hard real-time guarantee is established; and
+- the baseline does not represent every possible incremental solver architecture.
 
-B2. Dynamic-AC positioning (fixes M4)
-Two options — choose explicitly:
+This considerably increases confidence in the authors’ scientific judgement.
 
-    Algorithmic option: implement a finer-grained restoration (AC|DC-style) and compare against your component-level restoration on the dynamic suite (Table 11 gains a real competitor).
-    Systems option (cheaper): add one paragraph stating that fine-grained dynamic-AC maintenance is known, that your choice is deliberately conservative for auditability (restoration sets must be explainable to the verifier), and remove any phrasing implying incremental-GAC novelty.
+### 2.4 Useful ablations
 
-B3. Structural generality sweep (fixes §8.6 partially)
-Vary — one factor at a time — graph density, arity, domain size, tightness, and distance between consecutive feasible regions (you list these as missing; doing even 3 of 5 neutralizes the objection cheaply since generators already exist).
-C. Theory and presentation
-C1. Propositions. Compress Props. 2–4 into one "Standard properties" lemma with proof sketches (they are folklore). Either drop Prop. 1 or upgrade it to a real theorem: the concrete production checker implements membership in F(st) — that connects your G1–G4 gates to a formal statement and is genuinely your contribution.
-C2. Certificates — close the loop. You claim auditability but never measure it. Report: certificate size (KB/decision), serialization overhead (ms, % of pipeline), replay latency. One small table; without it a claimed contribution is unevaluated.
-C3. Writing.
+The comparison among fixed violated-scope, radius-based, frontier, explanation-guided, assumption-core, and full-scope repair is informative. The result that expanding cores recover 21 instances missed by fixed-scope repair is relevant, even though it demonstrates the benefit of expansion more strongly than the specific benefit of explanations.
 
-    Abstract: cut ~30%, keep the honesty, state the reframed contribution first.
-    Limitations: say each caveat once (currently 4–5 repetitions across abstract/intro/results/§8).
-    Table 7: move "Uncoordinated / Static priority" out of the methods block into a footnoted sanity check.
-    Add a notation table; fix the "???" in reference [20]; check [9]'s DOI string.
+### 2.5 Appropriate statistical caution
 
-D. Execution checklist
-Table
+Using episodes rather than individual epochs as the inferential unit in the sequential campaign is appropriate. The manuscript also correctly treats p95 and especially p99 results as descriptive because of temporal dependence and the small number of extreme observations.
 
-# Task	Neutralizes	Effort
+---
 
-1	Rerun static + sequential with conflict-aware decoder as main pipeline	M1	Medium
-2	Difficulty sweep until CP-SAT misses deadline; crossover figure	M3	Medium
-3	Persistent/assumption-based CP-SAT baseline; cost decomposition	M2	Medium–High
-4	Escalation policy + 30+ episodes + block-bootstrap tails	M2/M3	Medium
-5	One emulator-based or trace-driven validation (or pre-registered NI test)	M5	High
-6	Dynamic-AC comparison or explicit systems positioning	M4	Low–Medium
-7	Structural generality sweep (density, arity, tightness)	§8.6	Low
-8	Certificate size/replay measurement table	Contribution gap	Low
-9	Compress propositions; upgrade Prop. 1	M6	Low
-10	Abstract/title rewrite, limitations consolidation, ref [20] fix	Presentation	Low
-Suggested order: 1 → 2 → 4 → 3 → 10 → 9 → 8 → 7 → 6 → 5 (task 5 is the most expensive; decide venue based on whether you can do it).
-Bottom line
+# 3. Major comments
 
-    With tasks 1–4 + 8–10 only (~systems repositioning): solid for a mid-tier Springer telecom journal, acceptance ≈ 65–70%.
-    Adding task 5 (real emulator evidence): becomes competitive for TNSM/TCOM-class venues, ≈ 60–70% there.
-    Without task 2 (the crossover regime), the latency motivation remains unproven and any demanding reviewer will reject regardless of other fixes.
+## Major Comment 1 — The central sequential baseline is too limited
 
-If you want, I can draft the rewritten abstract and title in the reframed positioning, or turn this plan into a TODO.md file.
+The main performance conclusion compares ConsistXApp against CP-SAT models rebuilt in Python at every epoch. The manuscript acknowledges this limitation, but the sequential latency advantage is still prominent in the title, abstract, contributions, results, and conclusion.
+
+The comparison does not isolate the benefit of explanation-guided repair from the cost of repeatedly constructing a complete Python CP-SAT model. At \(n=1000\), the manuscript reports approximately 6.9 ms for model construction and 18.4 ms for solver search. Thus, a substantial part of the reported advantage comes from avoiding Python reconstruction.
+
+At minimum, the authors should add one stronger baseline:
+
+1. solver-native large-neighbourhood search centred on the previous accepted decision;
+2. a full CP-SAT model built once with activation literals for relations, allowing version-specific changes through assumptions;
+3. a persistent alternative solver that supports incremental modification; or
+4. a complete CP-SAT solve restricted by an adaptive neighbourhood chosen without propagation explanations.
+
+Without such a baseline, the conclusion must be narrowed to:
+
+> ConsistXApp outperformed the evaluated Python rebuild-and-resolve CP-SAT implementations on the generated sequential workloads.
+
+It should not be presented as a general advantage over “complete CP-SAT” or complete solving.
+
+---
+
+## Major Comment 2 — End-to-end latency excludes central components
+
+The reported latency excludes:
+
+- independent verification;
+- certificate construction and serialization;
+- certificate persistence;
+- model-registry access;
+- atomic version comparison;
+- forwarding authorization;
+- E2 transport; and
+- Near-RT RIC scheduling effects.
+
+This is particularly problematic because the verifier and audit certificate are presented as the paper’s central contributions. A system cannot claim low-latency auditable arbitration while excluding the cost of producing and storing the audit object.
+
+The authors should report at least:
+
+\[
+T_{\text{total}} =
+T_{\text{update}}+
+T_{\text{prop}}+
+T_{\text{decode}}+
+T_{\text{repair}}+
+T_{\text{verify}}+
+T_{\text{certificate}}+
+T_{\text{version-commit}}.
+\]
+
+Certificate size and replay latency should also be measured as functions of:
+
+- number of variables;
+- number of constraints;
+- initial violation count;
+- number of core expansions; and
+- explanation/core size.
+
+If E2 transport cannot be evaluated, “end-to-end” should be removed from table and figure captions. “Coordination-computation latency” would be more accurate.
+
+---
+
+## Major Comment 3 — Version binding is assumed rather than validated
+
+Atomic model-version handling is essential to Proposition 1. However, the manuscript appears to provide an architectural sequence rather than an implemented transaction evaluated under concurrency.
+
+The authors should clarify:
+
+- whether model lookup, verification, acceptance logging, and forwarding authorization are actually implemented as one transaction;
+- what concurrency-control mechanism is used;
+- whether model versions are immutable;
+- how authorization tokens are invalidated;
+- what happens if the registry is unavailable; and
+- whether forwarding and audit persistence are atomic or only ordered.
+
+A targeted race-condition campaign should repeatedly change the active model between verification and forwarding. The expected result is zero stale-version forwardings.
+
+Without such evidence, the claim should be described as a **required deployment protocol**, not as an experimentally validated property of the current implementation.
+
+---
+
+## Major Comment 4 — “Auditable certificate” needs integrity and provenance guarantees
+
+Definition 1 establishes replayable trace consistency and final feasibility. It does not establish that the certificate:
+
+- has not been modified;
+- corresponds to the action actually forwarded;
+- refers to an immutable model snapshot;
+- was emitted by an authorized verifier; or
+- is complete.
+
+A model-version string such as `nu17` is insufficient unless it is cryptographically bound to a canonical model representation.
+
+The certificate should contain, or the paper should discuss:
+
+- a cryptographic hash of the canonical registered model;
+- a hash of the context snapshot;
+- a hash of the exact forwarded assignment;
+- verifier implementation/version identifier;
+- canonical serialization rules;
+- timestamp or monotonic sequence number;
+- digital signature or message authentication code; and
+- append-only or tamper-evident storage.
+
+Otherwise, “replayable certificate” is justified, but “auditable” should be qualified as **logical replayability without tamper-evidence**.
+
+---
+
+## Major Comment 5 — The verifier-validation evidence needs fuller characterization
+
+The 680,450 checks are encouraging, but the absolute number alone is not sufficient. Approximately 602,000 checks come from property-based testing; the paper should report:
+
+- number of independently generated models;
+- distribution of variable counts, domain sizes, arities, and relation tightness;
+- number of malformed versus well-formed candidates;
+- number of accepted and rejected cases;
+- treatment of duplicate generated tests;
+- shrinking strategy used by the property-testing framework;
+- coverage of context/version errors; and
+- code coverage or mutation score, if available.
+
+The manuscript correctly states that input mutation is not code-mutation testing. Adding implementation mutation testing would materially strengthen the verifier claim: deliberately inject faults such as omitted constraints, incorrect tuple indexing, stale-context acceptance, missing-variable acceptance, and off-by-one domain errors, then report which tests detect them.
+
+The term “independently implemented” should also be operationally defined. Separate functions are not necessarily independent if they share model normalization, generated relation objects, or utility routines.
+
+---
+
+## Major Comment 6 — Synthetic O-RAN validity remains weak
+
+The five scenarios are described using O-RAN terminology, but the actual workloads are generated finite-domain positive-table CSPs with planted feasible assignments. The pseudo-physical model is not validated against an O-RAN emulator, system-level simulator, or measured RAN data.
+
+The manuscript already acknowledges this limitation, but stronger evidence is necessary for a telecommunications journal. Ideally, the authors should provide at least one closed-loop case study using:
+
+- ColO-RAN;
+- OpenRAN Gym;
+- FlexRIC;
+- ns-O-RAN/ns-3;
+- an O-RAN Software Community Near-RT RIC; or
+- another reproducible RIC/E2 environment.
+
+If this is not feasible, the paper should provide a detailed transformation from a realistic xApp conflict scenario to the registered table constraints, including actual parameter ranges, SLA thresholds, context updates, and E2 control semantics.
+
+The current results establish performance on structured dynamic CSPs inspired by O-RAN, not deployment effectiveness in an O-RAN system.
+
+---
+
+## Major Comment 7 — The evaluated graph structure favours localization
+
+The manuscript reports a mean constraint-graph degree of 3.4, maximum degree 8, and arity 2–3. This structure is favourable to local propagation and repair.
+
+A systematic sensitivity study is needed over:
+
+- graph degree and density;
+- clustering coefficient;
+- relation arity;
+- domain size;
+- table tightness;
+- connected-component size;
+- feasible-region fragmentation;
+- update locality; and
+- distance between consecutive feasible assignments.
+
+The most important response variables are:
+
+- probability of expansion to full scope;
+- final core fraction \(|A_r|/|A_t|\);
+- median and tail latency;
+- certificate size;
+- repair success; and
+- objective-quality loss.
+
+This would identify the actual structural regime in which incremental repair is beneficial.
+
+---
+
+## Major Comment 8 — Candidate-generator dependence should be integrated into the main pipeline
+
+The headline static result—248 repaired candidates out of 250—is produced by a deliberately conflict-unaware decoder. Forward checking reduces the number requiring repair to 35.
+
+Therefore, the principal end-to-end evaluation should use the strongest practical pipeline, not only the weakest decoder used for ablation. The authors should evaluate:
+
+> conflict-aware candidate generation + expanding repair + verifier + certificate.
+
+This combined pipeline should be used in the sequential campaign as well. Otherwise, the paper separately demonstrates that:
+
+- a weak decoder creates many repair opportunities; and
+- stronger decoders reduce repair frequency;
+
+but does not establish the performance of the recommended operational configuration.
+
+---
+
+## Major Comment 9 — Correct the internal contradiction about determinism
+
+The conclusion states:
+
+> “On 250 generated static instances in a multi-worker non-deterministic environment…”
+
+This directly contradicts Table 5 and Section 6.2, which state:
+
+- one experiment process;
+- `num_search_workers = 1`;
+- deterministic instance seeds; and
+- no process-level parallelism.
+
+This is not a minor stylistic issue because experimental determinism is part of the reproducibility argument. The conclusion must be corrected, and the authors should verify whether the table, methods section, or conclusion reflects the actual run configuration.
+
+---
+
+## Major Comment 10 — The public artifact does not yet clearly match the availability statement
+
+The manuscript claims availability of:
+
+- code;
+- generated instances;
+- raw logs;
+- explanation traces;
+- verifier-validation reports;
+- reproducibility manifests;
+- seed hierarchy;
+- command lines; and
+- scripts reproducing all tables and tests.
+
+The repository is accessible and contains source code, tests, scripts, and result CSV files. However, in its currently visible state, it does not clearly expose a complete reproducibility manifest, pinned dependency file, formal release, or license file, despite the README stating an MIT licence.
+
+Before publication, the authors should provide:
+
+1. a tagged immutable release;
+2. a DOI, preferably through Zenodo;
+3. `requirements.txt`, `environment.yml`, or equivalent lock file;
+4. an actual `LICENSE` file;
+5. one-command reproduction instructions;
+6. machine-readable campaign manifests;
+7. checksums for raw result files;
+8. the exact manuscript-to-artifact version mapping; and
+9. removal of committed `.DS_Store` and `__pycache__` files.
+
+The data-availability statement should be checked against the contents of the archived release, not the mutable default branch.
+
+---
+
+# 4. Minor comments
+
+1. The manuscript is long and repetitive. The limitations are commendable but are restated in the abstract, introduction, results, limitations, and conclusion. A reduction of approximately 15–20% would improve readability.
+2. The sentence in the introduction beginning “The scope of this comparison an evaluated Python rebuild-and-resolve baseline…” is grammatically incomplete.
+3. Table 1 should be supported more carefully. “n/r” avoids asserting absence, but each classification should be traceable to specific passages in the cited work.
+4. Define precisely whether all explicit relations are positive tables. If other relation types are supported, describe their exact verifier and CP-SAT encodings.
+5. Report the number and proportion of explanation-, assumption-core-, and frontier-driven expansions per dataset, not only aggregate “used” counts.
+6. Explain why an `UNKNOWN` status immediately invokes fallback rather than expanding the core or trying a lower-cost feasibility-only strategy with the remaining deadline.
+7. Clarify whether certificates are emitted for direct decodes, fallbacks, and blocked outcomes, or only for repaired decisions. Operational auditability arguably requires records for every forwarding decision and every blocked decision.
+8. Table 12’s “completed repair sequences” terminology is confusing for episode-level sequential results. Distinguish repair calls, repaired epochs, and episodes.
+9. Report confidence intervals for the objective-quality gap, not only a p-value and effect size.
+10. “Certified optimum” should always be qualified by the encoded model, integer scaling, and active lexicographic levels.
+11. Check author-affiliation formatting and use consistent superscripts.
+12. The journal name is **Annals of Telecommunications**, not “Anals of Communications.”
+
+---
+
+# 5. Required revision priorities
+
+Before acceptance, I consider the following essential:
+
+1. Correct the worker-count/determinism contradiction.
+2. Narrow all performance claims to the evaluated rebuild-and-resolve baseline.
+3. Include verification and certificate overhead in the reported pipeline latency.
+4. Measure certificate size and replay time.
+5. Validate or clearly reclassify atomic version binding as a non-implemented deployment requirement.
+6. Add at least one stronger incremental or neighbourhood-based baseline.
+7. Evaluate the recommended conflict-aware decoder plus verified repair pipeline.
+8. Strengthen structural sensitivity experiments beyond sparse arity-2/3 instances.
+9. Complete and archive the reproducibility artifact.
+10. Clarify that the certificate is replayable but not tamper-evident unless cryptographic binding is added.
+
+---
+
+# 6. Final recommendation
+
+The manuscript has a credible conceptual contribution and demonstrates commendable scientific restraint. The verifier-gated architecture, version-aware forwarding rule, and replayable repair traces form a potentially useful contribution to O-RAN conflict management. Nevertheless, the present evidence is not yet sufficient to support the complete systems narrative, particularly regarding end-to-end latency, auditability, atomic version binding, baseline fairness, and O-RAN deployment relevance.
+
+If the authors address the major issues above—especially the baseline, full-pipeline measurements, artifact completeness, and internal inconsistency—the paper could become suitable for publication.

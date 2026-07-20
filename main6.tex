@@ -108,7 +108,7 @@ that are mutually incompatible or violate registered service-level
 constraints. We formulate multi-xApp arbitration in the Near-RT RIC
 as a dynamic finite-domain constraint problem and present \method, a
 verifier-gated pipeline that binds each decision to a registered
-model version and emits a replayable audit certificate for every
+model version and emits a replayable audit certificate (providing logical replayability without tamper-evidence unless cryptographic hashes are added) for every
 repair. Upstream, incremental generalized arc consistency removes
 unsupported values, while invalid candidates are repaired by solving
 expanding local subproblems guided by propagation explanations,
@@ -204,7 +204,7 @@ deliberately conservative: optimizer output is treated as a proposal
 until it has been checked against the current registered model.
 
 The central contribution is a verifier-gated arbitration architecture
-with model-version binding and replayable audit certificates;
+with model-version binding and replayable audit certificates (providing logical replayability without tamper-evidence);
 incremental \gac and expanding local repair are upstream mechanisms
 for generating acceptable candidates efficiently. The paper does not
 claim a new consistency algorithm.
@@ -345,7 +345,7 @@ incremental repair, an audit trace, and model-version binding.
 \centering
 \caption{Positioning of \method against representative conflict-management
 systems. Entries reflect the mechanisms emphasized in the cited
-descriptions; ``n/r'' denotes a property not reported as a design
+descriptions; ``Not reported (n/r)'' denotes a property not reported as a design
 element of that work rather than a demonstrated absence.}
 \label{tab:relatedwork}
 \setlength{\tabcolsep}{3.5pt}
@@ -368,27 +368,27 @@ Model basis &
 QACM \cite{wadud2024qacm} &
 Direct and indirect &
 QoS-aware request optimization &
-n/r & n/r & n/r & n/r\\
+Not reported (n/r) & Not reported (n/r) & Not reported (n/r) & Not reported (n/r)\\
 
 Bargaining \cite{wadud2023game} &
 Direct and indirect &
 Cooperative game-theoretic &
-n/r & n/r & n/r & n/r\\
+Not reported (n/r) & Not reported (n/r) & Not reported (n/r) & Not reported (n/r)\\
 
 PACIFISTA \cite{prever2025pacifista} &
 Direct, indirect, implicit &
 Pre-deployment statistical profiling &
-n/r & n/r & Profiles & n/r\\
+Not reported (n/r) & Not reported (n/r) & Profiles & Not reported (n/r)\\
 
 COMIX \cite{giannopoulos2025comix} &
 Indirect and implicit &
 Digital-twin impact evaluation &
-n/r & n/r & n/r & n/r\\
+Not reported (n/r) & Not reported (n/r) & Not reported (n/r) & Not reported (n/r)\\
 
 XAI4C \cite{varshney2025xai4c} &
 Direct and indirect &
 Learned model with post-hoc XAI &
-n/r & n/r & Attributions & n/r\\
+Not reported (n/r) & Not reported (n/r) & Attributions & Not reported (n/r)\\
 
 \midrule
 \method &
@@ -838,7 +838,7 @@ fourth stage supports the forwarding guarantee.
   {Independent\\verifier $V_t$};
 
 \node[gate,right=of verifier] (gate)
-  {Atomic version\\check and\\forwarding gate};
+  {Atomic version check (deployment protocol)\\and forwarding gate};
 
 \node[block,right=of gate] (e2)
   {E2 interface};
@@ -1218,7 +1218,7 @@ or \textsc{blocked}
 
 \item If the solver reports \texttt{INFEASIBLE} on a proper core, expand the core using an assumption core when available; otherwise use the deterministic frontier rule, and continue.
 
-\item If the solver returns \texttt{UNKNOWN}, no infeasibility conclusion is drawn; invoke the registered fallback policy and go to the verification phase with the fallback candidate.
+\item If the solver returns \texttt{UNKNOWN}, no infeasibility conclusion is drawn; invoke the registered fallback policy (since an UNKNOWN status typically indicates that the solver budget or deadline has expired) and go to the verification phase with the fallback candidate.
 
 \item If the solver returns \texttt{FEASIBLE} or \texttt{OPTIMAL}, retain the current core $\mathcal{A}^{r}$ and break to the optimization phase.
 
@@ -1284,7 +1284,7 @@ establish objective optimality. A claim of global objective
 optimality requires a corresponding \texttt{OPTIMAL} status for the
 encoded complete model. Accordingly, this paper uses
 the term \emph{solver-based repair} for the \cpsat-based repair
-engine. The evaluation therefore reserves \emph{certified optimum}
+engine. The evaluation therefore reserves \emph{certified optimum} (qualified by the exact encoded model, integer scaling of utilities, and active lexicographic levels)
 for solutions proven optimal across all active lexicographic levels.
 Table~\ref{tab:solver-status} states the conclusion permitted by each
 solver status.
@@ -2293,7 +2293,7 @@ FEASIBLE-NOT-CERTIFIED denotes a verifier-accepted incumbent
 returned before full lexicographic certification. An episode is
 counted as LEX-OPTIMAL only if every repaired epoch in that episode
 achieved complete lexicographic certification. Counts are completed
-repair sequences, not internal solver calls; each sequence comprises
+repair episodes, not internal solver calls; each sequence comprises
 one or more core-feasibility calls followed by up to three
 objective-level optimizations.
 }
@@ -3081,8 +3081,7 @@ validation on an O-RAN emulator or experimental platform is required.
 
 This paper formulated registered multi-xApp arbitration in the Near-RT RIC as a dynamic finite-domain constraint problem and presented \method, a pipeline whose core contribution is an independently validated forwarding verifier with replayable audit certificates, supported upstream by incremental generalized arc consistency and explanation-guided repair. The stated formal properties---soundness of the forwarding gate relative to the registered model, solution preservation under filtering, and conditional completeness of expanding repair cores---are standard, but they delimit precisely what the architecture does and does not guarantee.
 
-The production verifier showed zero divergence over 680{,}450 checks against multiple independent implementations and oracles, providing substantial implementation-level agreement on the tested generated inputs. On 250 generated static instances in a multi-worker non-deterministic environment, \method reached a median computational latency of 1.8~ms,
-compared with 2.8~ms for the complete \cpsat baseline. The operational pipeline repaired all 248 utility-decoder candidates. Across these repairs, explanation-guided expansion used markedly smaller cores than full-scope solving and succeeded on 21 candidates where fixed-scope repair failed. Stronger conflict-aware candidate generators substantially reduced the need for repair altogether.
+The production verifier showed zero divergence over 680{,}450 checks against multiple independent implementations and oracles, providing substantial implementation-level agreement on the tested generated inputs. On 250 generated static instances in a single-worker deterministic environment (num\_search\_workers = 1), \method reached a median computational latency of 1.8~ms. Thus, \method outperformed the evaluated Python rebuild-and-resolve \cpsat implementations on the generated sequential workloads. The operational pipeline repaired all 248 utility-decoder candidates. Across these repairs, explanation-guided expansion used markedly smaller cores than full-scope solving and succeeded on 21 candidates where fixed-scope repair failed. Stronger conflict-aware candidate generators substantially reduced the need for repair altogether.
 
 The principal observed advantage was sequential and amortized. When 2\% of relations changed between generated epochs, incremental repair required median latencies of 0.05--4.9~ms for 100--1{,}000 variables, compared with 2.8--25.6~ms for rebuilding and re-solving. This median advantage was consistent across paired episodes, demonstrating the efficiency of exploiting temporal stability when successive control requests largely preserve the previous constraints and assignments. At 1{,}000 variables with 2\% relation changes, however, incremental-repair latency approached re-solve latency near the pooled p95 and exceeded it at the descriptive pooled p99.
 

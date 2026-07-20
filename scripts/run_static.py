@@ -19,7 +19,9 @@ METHODS = [
     ("ConsistXApp expl",    dict(gac=True,  continuous=True,  repair=True,  strategy="explanation", decode="continuous")),
     ("ConsistXApp radius",  dict(gac=True,  continuous=True,  repair=True,  strategy="radius1",     decode="continuous")),
     ("ConsistXApp assume",  dict(gac=True,  continuous=True,  repair=True,  strategy="assumption",  decode="continuous")),
+    ("FC + expl repair",    dict(gac=True,  continuous=False, repair=True,  strategy="explanation", decode="forward_check")),
 ]
+
 
 FIELDS = ["method", "scenario", "seed", "num_variables", "outcome",
           "executed_verified", "optimized_verified", "repaired_verified",
@@ -30,7 +32,9 @@ FIELDS = ["method", "scenario", "seed", "num_variables", "outcome",
           "repair_final_core", "repair_expansions", "repair_used_explanation",
           "repair_used_assumption_core", "repair_used_frontier",
           "repair_boundary_released", "repair_full_scope", "repair_status",
+          "cert_overhead_ns", "cert_size_bytes",
           "values_before", "values_after", "tuples_before", "tuples_after",
+
           "cf_throughput", "cf_energy", "cf_hof", "cf_fairness",
           "ex_throughput", "ex_energy", "ex_hof", "ex_fairness"]
 
