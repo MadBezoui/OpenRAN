@@ -1,3 +1,12 @@
+% ============================================================
+% references.bib
+% ConsistXApp
+% ============================================================
+
+% ============================================================
+% O-RAN architecture and specifications
+% ============================================================
+
 @article{polese2023oran,
   author  = {Polese, Michele and Bonati, Leonardo and D'Oro, Salvatore
              and Basagni, Stefano and Melodia, Tommaso},
@@ -11,15 +20,19 @@
   doi     = {10.1109/COMST.2023.3239220}
 }
 
-@misc{oran2024conflict,
-  author       = {{O-RAN Alliance}},
-  title        = {{O-RAN Conflict Mitigation}, Version 1.00},
-  year         = {2024},
-  howpublished = {Technical report, Near-Real-Time RIC and E2
-                  Interface Work Group},
-  note         = {Specification portal accessed 14 July 2024},
-  url          = {https://specifications.o-ran.org/}
+@techreport{oran2024conflict,
+  author      = {{O-RAN Alliance}},
+  title       = {{O-RAN Conflict Mitigation}, Version 1.00},
+  institution = {O-RAN Alliance, Near-Real-Time RIC and E2
+                 Interface Work Group},
+  year        = {2024},
+  note        = {Specification portal accessed 14 July 2024},
+  url         = {https://specifications.o-ran.org/}
 }
+
+% ============================================================
+% O-RAN conflict management
+% ============================================================
 
 @article{adamczyk2023conflict,
   author  = {Adamczyk, Cezary and Kliks, Adrian},
@@ -45,53 +58,108 @@
   doi     = {10.1109/TGCN.2024.3431945}
 }
 
+@article{annals2024,
+  author  = {Corici, Marius and Modroiu, Ramona and Eichhorn, Fabian
+             and Troudt, Eric and Magedanz, Thomas},
+  title   = {Towards Efficient Conflict Mitigation in the Converged
+             {6G} {Open RAN} Control Plane},
+  journal = {Annals of Telecommunications},
+  year    = {2024},
+  volume  = {79},
+  number  = {9--10},
+  pages   = {621--631},
+  doi     = {10.1007/s12243-024-01036-2}
+}
+
+@inproceedings{wadud2023game,
+  author    = {Wadud, Abdul and Golpayegani, Fatemeh and Afraz, Nima},
+  title     = {Conflict Management in the {Near-RT-RIC} of
+               {Open RAN}: A Game-Theoretic Approach},
+  booktitle = {2023 IEEE International Conferences on Internet of
+               Things (iThings) and related conferences},
+  year      = {2023},
+  pages     = {479--486},
+  publisher = {IEEE},
+  address   = {Danzhou, China},
+  doi       = {10.1109/iThings-GreenCom-CPSCom-SmartData-Cybermatics60724.2023.00095}
+}
+
 @article{prever2025pacifista,
-  author  = {Brach del Prever, Pietro and D'Oro, Salvatore and
+  author  = {{Brach del Prever}, Pietro and D'Oro, Salvatore and
              Bonati, Leonardo and Polese, Michele and Tsampazi, Maria
              and Lehmann, Heiko and Melodia, Tommaso},
   title   = {{PACIFISTA}: Conflict Evaluation and Management
-             in Open RAN},
+             in {Open RAN}},
   journal = {IEEE Transactions on Mobile Computing},
   year    = {2025},
+  volume  = {24},
+  number  = {10},
+  pages   = {10590--10605},
   doi     = {10.1109/TMC.2025.3570632}
 }
 
 @article{giannopoulos2025comix,
-  author  = {Giannopoulos, Anastasios E. and others},
+  author  = {Giannopoulos, Anastasios E. and Spantideas, Sotirios T.
+             and Levis, George and Kalafatelis, Alexandros S.
+             and Trakadas, Panagiotis},
   title   = {{COMIX}: Generalized Conflict Management in {O-RAN}
              xApps---Architecture, Workflow, and a Power Control Case},
   journal = {IEEE Access},
   year    = {2025},
-  doi     = {10.1109/ACCESS.2025.3585774},
+  volume  = {13},
+  pages   = {116684--116700},
+  doi     = {10.1109/ACCESS.2025.3585774}
 }
 
 @inproceedings{wadud2025mobility,
   author    = {Wadud, Abdul and Golpayegani, Fatemeh and Afraz, Nima},
-  title     = {{xApp}-Level Conflict Mitigation in {O-RAN}, a
-               Mobility Driven Energy Saving Case},
-  booktitle = {IEEE INFOCOM 2025 - IEEE Conference on Computer
+  title     = {{xApp}-Level Conflict Mitigation in {O-RAN}: A
+               Mobility-Driven Energy-Saving Case},
+  booktitle = {IEEE INFOCOM 2025 -- IEEE Conference on Computer
                Communications Workshops (INFOCOM WKSHPS)},
-  year      = {2025}
+  year      = {2025},
+  publisher = {IEEE},
+  address   = {London, UK},
+  doi       = {10.1109/INFOCOMWKSHPS65812.2025.11153006}
 }
 
+@article{varshney2025xai4c,
+  author  = {Varshney, Nancy and Puligheddu, Corrado and Badawy, Ahmed
+             and Chiasserini, Carla Fabiana},
+  title   = {Explainable Artificial Intelligence for Conflict
+             Management: {XAI4C} for Conflict Detection and Mitigation
+             in {O-RAN} {Near-RT} {RIC}},
+  journal = {IEEE Vehicular Technology Magazine},
+  year    = {2025},
+  volume  = {20},
+  number  = {4},
+  pages   = {46--55},
+  doi     = {10.1109/MVT.2025.3625693}
+}
+
+% ============================================================
+% O-RAN experimental platforms
+% ============================================================
+
 @article{polese2022coloran,
-  author  = {Polese, Michele and Bonati, Leonardo and
-             D'Oro, Salvatore and Basagni, Stefano and
-             Melodia, Tommaso},
+  author  = {Polese, Michele and Bonati, Leonardo and D'Oro, Salvatore
+             and Basagni, Stefano and Melodia, Tommaso},
   title   = {{ColO-RAN}: Developing Machine Learning-Based xApps
              for Open RAN Closed-Loop Control on Programmable
              Experimental Platforms},
   journal = {IEEE Transactions on Mobile Computing},
   year    = {2023},
+  volume  = {22},
+  number  = {10},
+  pages   = {5787--5800},
   doi     = {10.1109/TMC.2022.3188013}
 }
 
 @article{bonati2023openrangym,
-  author  = {Bonati, Leonardo and Polese, Michele and
-             D'Oro, Salvatore and Basagni, Stefano and
-             Melodia, Tommaso},
-  title   = {{OpenRAN Gym}: AI/ML Development, Data Collection,
-             and Testing for {O-RAN} on PAWR Platforms},
+  author  = {Bonati, Leonardo and Polese, Michele and D'Oro, Salvatore
+             and Basagni, Stefano and Melodia, Tommaso},
+  title   = {{OpenRAN Gym}: {AI/ML} Development, Data Collection,
+             and Testing for {O-RAN} on {PAWR} Platforms},
   journal = {Computer Networks},
   year    = {2023},
   volume  = {220},
@@ -100,78 +168,17 @@
 }
 
 @inproceedings{schmidt2021flexric,
-  author    = {Schmidt, Robert and Irazabal, Miguel and
-               Nikaein, Navid},
-  title     = {{FlexRIC}: An SDK for Next-Generation SD-RANs},
+  author    = {Schmidt, Robert and Irazabal, Miguel and Nikaein, Navid},
+  title     = {{FlexRIC}: An {SDK} for Next-Generation {SD-RANs}},
   booktitle = {Proceedings of the 17th International Conference on
                Emerging Networking Experiments and Technologies},
+  series    = {CoNEXT '21},
   year      = {2021},
   pages     = {411--425},
   publisher = {Association for Computing Machinery},
   address   = {New York, NY, USA},
   doi       = {10.1145/3485983.3494870}
 }
-
-
-@misc{ortools,
-  author       = {Perron, Laurent and Didier, Fr{\'e}d{\'e}ric},
-  title        = {{CP-SAT} Solver},
-  year         = {2023},
-  howpublished = {Google OR-Tools documentation},
-  url          = {https://developers.google.com/optimization/cp/cp_solver},
-  note         = {Accessed 14 July 2024}
-}
-
-@article{annals2024,
-  author  = {Wadud, A. and Golpayegani, F. and Afraz, N.},
-  title   = {Towards Efficient Conflict Mitigation in the Converged
-             {6G} {Open RAN} Control Plane},
-  journal = {Annals of Telecommunications},
-  year    = {2024},
-  doi     = {10.1007/s12243-024-01036-2}
-}
-
-@article{bayati2011bmatching,
-  author  = {Bayati, Mohsen and Borgs, Christian and Chayes, Jennifer and Zecchina, Riccardo},
-  title   = {Belief Propagation for Weighted b-Matchings on Arbitrary Graphs and Its Relation to Linear Programs with Integer Solutions},
-  journal = {SIAM Journal on Discrete Mathematics},
-  volume  = {25},
-  number  = {2},
-  pages   = {989--1011},
-  year    = {2011},
-  doi     = {10.1137/090753115}
-}
-
-
-% ============================================================
-% O-RAN architecture and conflict management
-% ============================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% ============================================================
-% O-RAN experimental platforms
-% ============================================================
-
-
-
-
-
-
-
-
 
 % ============================================================
 % Constraint programming and propagation
@@ -182,10 +189,10 @@
   title   = {{STR2}: Optimized Simple Tabular Reduction
              for Table Constraints},
   journal = {Constraints},
+  year    = {2011},
   volume  = {16},
   number  = {4},
   pages   = {341--371},
-  year    = {2011},
   doi     = {10.1007/s10601-011-9107-6}
 }
 
@@ -195,8 +202,34 @@
                Satisfaction Problems},
   booktitle = {Proceedings of the Ninth National Conference
                on Artificial Intelligence},
+  year      = {1991},
   pages     = {221--226},
-  year      = {1991}
+  publisher = {AAAI Press},
+  address   = {Anaheim, CA, USA}
+}
+
+@inproceedings{berlandier1994acdc,
+  author    = {Berlandier, Pierre and Neveu, Bertrand},
+  title     = {Maintaining Arc Consistency through Constraint
+               Retraction},
+  booktitle = {Proceedings of the Sixth IEEE International
+               Conference on Tools with Artificial Intelligence},
+  year      = {1994},
+  pages     = {426--431},
+  publisher = {IEEE},
+  address   = {New Orleans, LA, USA}
+}
+
+@inproceedings{debruyne1996dnac6,
+  author    = {Debruyne, Romuald},
+  title     = {Arc-Consistency in Dynamic {CSPs} Is No More
+               Prohibitive},
+  booktitle = {Proceedings of the Eighth IEEE International
+               Conference on Tools with Artificial Intelligence},
+  year      = {1996},
+  pages     = {299--306},
+  publisher = {IEEE},
+  address   = {Toulouse, France}
 }
 
 @inproceedings{yap2020gac,
@@ -205,53 +238,84 @@
                Constraints: A Summary of Algorithmic Ideas},
   booktitle = {Proceedings of the AAAI Conference on
                Artificial Intelligence},
+  year      = {2020},
   volume    = {34},
   number    = {09},
   pages     = {13590--13597},
-  year      = {2020},
   doi       = {10.1609/aaai.v34i09.7086}
 }
 
 @inproceedings{gupta2021explanations,
-  author    = {Dev Gupta, Sharmi and Gen{\c{c}}, Beg{\"u}m and
+  author    = {Dev Gupta, Sharmi and Genc, Begum and
                O'Sullivan, Barry},
   title     = {Explanation in Constraint Satisfaction: A Survey},
   booktitle = {Proceedings of the Thirtieth International Joint
                Conference on Artificial Intelligence},
   year      = {2021},
-  doi       = {10.24963/ijcai.2021/601},
+  pages     = {4400--4407},
+  publisher = {International Joint Conferences on Artificial
+               Intelligence Organization},
+  address   = {Montreal, Canada},
+  doi       = {10.24963/ijcai.2021/601}
+}
+
+@article{ginsberg1993dynamic,
+  author  = {Ginsberg, Matthew L.},
+  title   = {Dynamic Backtracking},
+  journal = {Journal of Artificial Intelligence Research},
+  year    = {1993},
+  volume  = {1},
+  pages   = {25--46},
+  url     = {https://www.jair.org/index.php/jair/article/view/10107}
+}
+
+@incollection{shaw1998lns,
+  author    = {Shaw, Paul},
+  title     = {Using Constraint Programming and Local Search Methods
+               to Solve Vehicle Routing Problems},
+  booktitle = {Principles and Practice of Constraint Programming ---
+               CP98},
+  editor    = {Maher, Michael and Puget, Jean-Fran{\c{c}}ois},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {1520},
+  year      = {1998},
+  pages     = {417--431},
+  publisher = {Springer},
+  address   = {Berlin, Heidelberg},
+  doi       = {10.1007/3-540-49481-2\_30}
 }
 
 % ============================================================
-% CP-SAT
+% CP-SAT and OR-Tools
 % ============================================================
 
 @inproceedings{perron2023cpsat,
-  author    = {Perron, Laurent and Didier, Fr{\'e}d{\'e}ric and
-               Gay, Steven},
+  author    = {Perron, Laurent and Didier, Fr{\'e}d{\'e}ric
+               and Gay, Steven},
   title     = {The {CP-SAT-LP} Solver},
-  booktitle = {29th International Conference on Principles and
-               Practice of Constraint Programming},
+  booktitle = {29th International Conference on Principles
+               and Practice of Constraint Programming},
+  editor    = {Schaus, Pierre},
   series    = {Leibniz International Proceedings in Informatics},
+  volume    = {280},
+  publisher = {Schloss Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik},
+  address   = {Dagstuhl, Germany},
   year      = {2023},
-  note      = {Using OR-Tools v9.11},
   doi       = {10.4230/LIPIcs.CP.2023.3}
 }
 
-
-
-
-
-@article{wainwright2005map,
-  title={MAP estimation via agreement on trees: message-passing and linear programming},
-  author={Wainwright, Martin J and Jaakkola, Tommi S and Willsky, Alan S},
-  journal={IEEE transactions on information theory},
-  volume={51},
-  number={11},
-  pages={3697--3717},
-  year={2005},
-  publisher={IEEE}
+@misc{ortools,
+  author       = {{Google OR-Tools Team}},
+  title        = {{CP-SAT} Solver},
+  year         = {2024},
+  howpublished = {Google for Developers, OR-Tools documentation},
+  url          = {https://developers.google.com/optimization/cp/cp_solver},
+  note         = {Accessed 17 July 2026}
 }
+
+% ============================================================
+% Message passing and continuous-relaxation background
+% ============================================================
 
 @incollection{yedidia2003understanding,
   author    = {Yedidia, Jonathan S. and Freeman, William T. and
@@ -259,29 +323,42 @@
   title     = {Understanding Belief Propagation and Its
                Generalizations},
   booktitle = {Exploring Artificial Intelligence in the New Millennium},
+  editor    = {Lakemeyer, Gerhard and Nebel, Bernhard},
   publisher = {Morgan Kaufmann},
   address   = {San Francisco, CA, USA},
-  pages     = {239--269},
-  year      = {2003}
+  year      = {2003},
+  pages     = {239--269}
 }
 
-@article{varshney2025xai4c,
-  author  = {Varshney, Nishant and others},
-  title   = {Explainable Artificial Intelligence for Conflict Management:
-             {XAI4C} for Conflict Detection and Mitigation in {O-RAN}
-             {Near-RT} {RIC}},
-  journal = {IEEE Vehicular Technology Magazine},
-  year    = {2025},
-  doi     = {10.1109/MVT.2025.3625693}
+% ============================================================
+% Optional background references retained from the original file
+% These entries are valid but are not cited by the corrected
+% manuscript unless explicitly added to the text.
+% ============================================================
+
+@article{bayati2011bmatching,
+  author  = {Bayati, Mohsen and Borgs, Christian and Chayes, Jennifer
+             and Zecchina, Riccardo},
+  title   = {Belief Propagation for Weighted b-Matchings on Arbitrary
+             Graphs and Its Relation to Linear Programs with Integer
+             Solutions},
+  journal = {SIAM Journal on Discrete Mathematics},
+  year    = {2011},
+  volume  = {25},
+  number  = {2},
+  pages   = {989--1011},
+  doi     = {10.1137/090753115}
 }
 
-@inproceedings{wadud2023game,
-  author    = {Wadud, Abdul and Golpayegani, Fatemeh and Afraz, Nima},
-  title     = {Conflict Management in the {Near-RT-RIC} of
-               {Open RAN}: A {Game} {Theoretic} Approach},
-  booktitle = {Proc. IEEE International Conferences on Internet of
-               Things (iThings) and Green Computing and Communications
-               (GreenCom) and Cyber, Physical and Social Computing
-               (CPSCom)},
-  year      = {2023}
+@article{wainwright2005map,
+  author  = {Wainwright, Martin J. and Jaakkola, Tommi S.
+             and Willsky, Alan S.},
+  title   = {{MAP} Estimation via Agreement on Trees:
+             Message-Passing and Linear Programming},
+  journal = {IEEE Transactions on Information Theory},
+  year    = {2005},
+  volume  = {51},
+  number  = {11},
+  pages   = {3697--3717},
+  doi     = {10.1109/TIT.2005.856932}
 }
