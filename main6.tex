@@ -225,8 +225,8 @@ with the complete generated instance, and supplying the previous
 solution as a hint did not materially reduce these costs. Repairing
 the previous accepted decision instead operated on the relations
 invalidated by the update and on the repair core induced by them. The
-scope of this comparison---an evaluated Python rebuild-and-resolve
-baseline, not every persistent or incremental solver architecture---is
+scope of this comparison - an evaluated Python rebuild-and-resolve
+baseline, not every persistent or incremental solver architecture - is
 detailed in Section~\ref{sec:baseline-scope}.
 
 The contributions of this paper are as follows.
@@ -247,21 +247,21 @@ core-expansion trace and its causes, and the final verifier outcome.
 Third, we formulate registered arbitration as a dynamic finite-domain
 constraint problem with context-dependent hard relations, soft
 utility, and temporal-stability costs, and we integrate established
-constraint-programming mechanisms---incremental \gac with restoration,
+constraint-programming mechanisms - incremental \gac with restoration,
 explanation-guided monotone core expansion with conditional
-completeness, and solver-based repair---into the verified pipeline.
+completeness, and solver-based repair - into the verified pipeline.
 Expanding cores resolved all 248 evaluated repair candidates, whereas
-fixed violated-scope repair failed on 21 of them; this success-rate
+fixed violated-scope repair failed on 21 of them, this success-rate
 difference is statistically significant under the exact paired test.
 We also evaluate stronger conflict-aware decoders and show that they
 reduce, but do not eliminate, the need for verified repair.
 
 Finally, we characterize the operating regime and its limitations:
 sequential repair provides a growing median advantage when updates
-are small; there is no cold-start advantage over complete \cpsat up
-to 1{,}000 variables; the available sample supports only descriptive
-tail conclusions; local repair has a measurable objective-quality
-cost; and an evaluated continuous-relaxation stage is
+are small, there is no cold-start advantage over complete \cpsat up
+to 1{,}000 variables, the available sample supports only descriptive
+tail conclusions, local repair has a measurable objective-quality
+cost, and an evaluated continuous-relaxation stage is
 counterproductive.
 
 Each contribution maps to a specific result, as summarized below.
@@ -345,7 +345,7 @@ incremental repair, an audit trace, and model-version binding.
 \centering
 \caption{Positioning of \method against representative conflict-management
 systems. Entries reflect the mechanisms emphasized in the cited
-descriptions; ``Not reported (n/r)'' denotes a property not reported as a design
+descriptions, ``Not reported (n/r)'' denotes a property not reported as a design
 element of that work rather than a demonstrated absence.}
 \label{tab:relatedwork}
 \setlength{\tabcolsep}{3.5pt}
@@ -402,7 +402,7 @@ Yes & Yes & Yes & Yes\\
 
 The comparison is deliberately narrow. These systems largely address
 what a candidate action \emph{may do} to the network, a question
-\method does not attempt to answer; conversely \method enforces a
+\method does not attempt to answer, conversely \method enforces a
 registered model that those systems are, in part, mechanisms for
 constructing. The approaches are therefore complementary rather than
 competing, and the table should be read as a statement of scope, not
@@ -422,7 +422,7 @@ Dynamic constraint satisfaction studies sequences of related
 problems and the incremental maintenance of consistency. A line of
 work descending from DnAC-4 \cite{bessiere1991dynamic} maintains
 per-value justifications so that, after a constraint retraction, only
-a limited set of previously removed values must be reconsidered; AC$|$DC
+a limited set of previously removed values must be reconsidered, AC$|$DC
 \cite{berlandier1994acdc} and DnAC-6 \cite{debruyne1996dnac6} refine
 this idea with lower space and time overheads. The restoration rule
 used in this paper is deliberately coarser: after a relaxation, the
@@ -442,7 +442,7 @@ decisions \cite{ginsberg1993dynamic}. Large-neighbourhood search restricts a
 complete solver to a neighbourhood of a current assignment and
 modifies that neighbourhood as search proceeds
 \cite{shaw1998lns}. Assumption-based infeasibility analysis identifies
-a sufficient subset of active assumptions causing inconsistency; such
+a sufficient subset of active assumptions causing inconsistency, such
 sets need not be cardinality-minimal.
 
 Modern solvers such as OR-Tools \cpsat combine presolve, propagation,
@@ -641,7 +641,7 @@ R_{12}
 The relation forbids high power when the cell is sleeping and low
 power when the cell is active. Assume that the preferred requests are
 $x_1=\text{high}$ and $x_2=\text{sleep}$. These requests are soft
-preferences; the base domains remain multivalued.
+preferences, the base domains remain multivalued.
 
 \gac removes no value. The value \text{high} has support
 $(\text{high},\text{on})$, and \text{sleep} has support
@@ -901,14 +901,14 @@ fourth stage supports the forwarding guarantee.
 }
 \caption{
 \method in the Near-RT RIC control path. Solid arrows carry control
-proposals and accepted actions; dashed arrows carry registered-model
-and context data; dotted arrows carry audit data. Every forwarded
+proposals and accepted actions, dashed arrows carry registered-model
+and context data, dotted arrows carry audit data. Every forwarded
 action passes the independent verifier $V_t$ and an atomic
 model-version check bound to $\nu_t$: a candidate rejected by the
 verifier, or one whose model version changed between verification and
 forwarding, is not admitted to E2. Incremental \gac and solver-based
 repair generate candidates efficiently but are outside the trusted
-path---a fault in either can reduce availability or objective
+path - a fault in either can reduce availability or objective
 quality, but cannot by itself cause a registered-model-invalid
 forwarding.
 }
@@ -982,7 +982,7 @@ supports and previous deletions can be reused when their premises
 remain valid. If the update contains a relaxation, the affected
 constraint-graph component is restored to its base domains and
 current allowed tuples before \gac is re-established. This
-full-component restoration is a conservative sufficient rule; it is
+full-component restoration is a conservative sufficient rule, it is
 not claimed to be the minimum restoration set computed by
 fine-grained dynamic arc-consistency schemes
 \cite{bessiere1991dynamic,berlandier1994acdc,debruyne1996dnac6}, and
@@ -1128,7 +1128,7 @@ constraint: the lowest-indexed active hard relation whose scope
 intersects $\mathcal{A}^{r}$ but is not contained in it, together
 with all variables in that scope. Ties cannot arise because the
 constraint index is a total order. One constraint, not one adjacency
-layer, is added per iteration; this keeps expansions minimal and
+layer, is added per iteration, this keeps expansions minimal and
 makes certificate replay deterministic.
 
 If propagation produces a wipeout, its explanation supplies
@@ -1208,23 +1208,23 @@ or \textsc{blocked}
 
 \item Enforce \gac on the restricted model.
 
-\item If propagation wipes out at the full core $\mathcal{A}^{r}=\mathcal{A}_t$, the registered hard model is infeasible; no same-model candidate, including the registered fallback, can pass the verifier, so return \textsc{blocked} for the current model version.
+\item If propagation wipes out at the full core $\mathcal{A}^{r}=\mathcal{A}_t$, the registered hard model is infeasible, no same-model candidate, including the registered fallback, can pass the verifier, so return \textsc{blocked} for the current model version.
 
 \item If propagation wipes out on a proper core $\mathcal{A}^{r}\subsetneq\mathcal{A}_t$, extract the wipeout explanation, expand the core, and continue.
 
 \item Otherwise solve the objective-free restricted subproblem with \cpsat.
 
-\item If the solver reports \texttt{INFEASIBLE} at the full core $\mathcal{A}^{r}=\mathcal{A}_t$, the registered hard model is infeasible under the current exact encoding and conclusive status; return \textsc{blocked} for the current model version.
+\item If the solver reports \texttt{INFEASIBLE} at the full core $\mathcal{A}^{r}=\mathcal{A}_t$, the registered hard model is infeasible under the current exact encoding and conclusive status, return \textsc{blocked} for the current model version.
 
-\item If the solver reports \texttt{INFEASIBLE} on a proper core, expand the core using an assumption core when available; otherwise use the deterministic frontier rule, and continue.
+\item If the solver reports \texttt{INFEASIBLE} on a proper core, expand the core using an assumption core when available, otherwise use the deterministic frontier rule, and continue.
 
-\item If the solver returns \texttt{UNKNOWN}, no infeasibility conclusion is drawn; invoke the registered fallback policy (since an UNKNOWN status typically indicates that the solver budget or deadline has expired) and go to the verification phase with the fallback candidate.
+\item If the solver returns \texttt{UNKNOWN}, no infeasibility conclusion is drawn, invoke the registered fallback policy (since an UNKNOWN status typically indicates that the solver budget or deadline has expired) and go to the verification phase with the fallback candidate.
 
 \item If the solver returns \texttt{FEASIBLE} or \texttt{OPTIMAL}, retain the current core $\mathcal{A}^{r}$ and break to the optimization phase.
 
-\item \textbf{Operational optimization phase:} Optimize the lexicographic objectives on the feasible core. If every active lexicographic level returns \texttt{OPTIMAL}, mark the repair \textsc{lex-optimal}. If the remaining optimization budget expires after the solver has produced a feasible incumbent but before all lexicographic levels are certified, mark the result \textsc{feasible-not-certified} and submit the incumbent to the independent verification phase. The incumbent is not treated as verified at this point; independent verification occurs only in Step~12.
+\item \textbf{Operational optimization phase:} Optimize the lexicographic objectives on the feasible core. If every active lexicographic level returns \texttt{OPTIMAL}, mark the repair \textsc{lex-optimal}. If the remaining optimization budget expires after the solver has produced a feasible incumbent but before all lexicographic levels are certified, mark the result \textsc{feasible-not-certified} and submit the incumbent to the independent verification phase. The incumbent is not treated as verified at this point, independent verification occurs only in Step~12.
 
-\item \textbf{Verification phase:} Submit the final optimized or fallback candidate to the independent verifier. If the verifier accepts it, return the verified candidate. If it rejects an optimized candidate, submit the registered fallback to the verifier; if the fallback is accepted, return it. Otherwise return \textsc{blocked}.
+\item \textbf{Verification phase:} Submit the final optimized or fallback candidate to the independent verifier. If the verifier accepts it, return the verified candidate. If it rejects an optimized candidate, submit the registered fallback to the verifier, if the fallback is accepted, return it. Otherwise return \textsc{blocked}.
 
 \end{algsteps}
 \end{algorithm}
@@ -1302,7 +1302,7 @@ Status & Permitted conclusion\\
 \texttt{OPTIMAL} &
 \shortstack[l]{Feasible and optimal for the\\current encoded objective}\\[2pt]
 \texttt{FEASIBLE} &
-\shortstack[l]{Feasible incumbent; optimality\\not established}\\[2pt]
+\shortstack[l]{Feasible incumbent, optimality\\not established}\\[2pt]
 \texttt{INFEASIBLE} &
 \shortstack[l]{Infeasible for the current encoded\\model and boundary conditions only}\\[2pt]
 \texttt{UNKNOWN} &
@@ -1318,13 +1318,13 @@ boundary may exclude assignments that the complete model admits.
 \paragraph{Fallback semantics.}
 A fallback is a version-specific candidate policy, not an exemption
 from verification. Registration is mandatory: a fallback must be
-explicitly registered in the current model version---for example,
+explicitly registered in the current model version - for example,
 rejection of the conflicting requests, retention of a previous
-configuration, or a safe no-operation---and fallback lookup is
+configuration, or a safe no-operation - and fallback lookup is
 performed against the active version $\nu_t$. It must pass the same
 verifier as any solver-generated candidate, so a previous
 configuration is re-verified before reuse. Fallback validation is not
-cached across model versions; any change of $\nu_t$ invalidates a
+cached across model versions, any change of $\nu_t$ invalidates a
 prior acceptance, because the relations against which it was checked
 may have changed. If no fallback is registered, or if the registered
 fallback fails verification under the current model version, the
@@ -1376,7 +1376,7 @@ values, or stale context identifiers, all of which $V_t$ maps to
 for every $\bm{x}\in\mathcal{X}_t$,
 that is, $V_t$ implements set membership in $\mathcal{F}(\bm{s}_t)$
 over its full input space;
-(ii)~forwarding is enabled only after verifier acceptance; and
+(ii)~forwarding is enabled only after verifier acceptance, and
 (iii)~the registered model version does not change between
 verification and forwarding, then every forwarded action belongs to
 $\mathcal{F}(\bm{s}_t)$ for model version $\nu_t$.
@@ -1403,7 +1403,7 @@ invariances and mutation behaviour that any membership test must
 satisfy. Proposition~\ref{prop:soundness} is therefore an
 architectural invariant conditional on verifier correctness, complete
 registration of the hard constraints, and atomic model-version
-handling; the gates provide evidence for, not proof of, premise (i),
+handling, the gates provide evidence for, not proof of, premise (i),
 and nothing here implies that the registered model captures every
 dependency of the physical RAN.
 \end{remark}
@@ -1480,8 +1480,8 @@ available before the control deadline.
 
 The forwarding architecture enforces safety relative to the registered
 model. Availability is not unconditional because the registered hard
-model or every fallback may be infeasible. The temporal metrics distinguish four boundaries: (1) \cpsat's internal 100~ms solver time limit; (2) stage-boundary budget checks, where an algorithm inspects elapsed time before invoking a subsequent stage; (3) post-hoc deadline-compliance classification, which labels an outcome based on total elapsed time; and (4) the absence of preemptive interruption, meaning a running stage (such as propagation) is allowed to complete before its latency is recorded. Consequently, the experiments characterize
-computational latency and post-hoc compliance; they do not demonstrate
+model or every fallback may be infeasible. The temporal metrics distinguish four boundaries: (1) \cpsat's internal 100~ms solver time limit, (2) stage-boundary budget checks, where an algorithm inspects elapsed time before invoking a subsequent stage, (3) post-hoc deadline-compliance classification, which labels an outcome based on total elapsed time, and (4) the absence of preemptive interruption, meaning a running stage (such as propagation) is allowed to complete before its latency is recorded. Consequently, the experiments characterize
+computational latency and post-hoc compliance, they do not demonstrate
 a hard real-time scheduling guarantee.
 
 % ============================================================
@@ -1491,7 +1491,7 @@ a hard real-time scheduling guarantee.
 
 The following properties of the propagation and repair layers are
 standard consequences of \gac theory and of the monotone expansion
-rule; we state them together with proof sketches because the pipeline
+rule, we state them together with proof sketches because the pipeline
 relies on them, without claiming analytical novelty.
 
 \begin{proposition}[\gac solution preservation]
@@ -1532,7 +1532,7 @@ the full core.
 
 \begin{proof}[Proof sketch]
 Monotonicity and the expansion bound follow from the expansion rule,
-which only adds variables and never removes them; each strict
+which only adds variables and never removes them, each strict
 expansion increases the core cardinality by at least one, and the
 core is bounded above by $\mathcal{A}_t$.
 \end{proof}
@@ -1544,7 +1544,7 @@ Assume that
 (ii)~every registered hard relation is encoded exactly;
 (iii)~no active hard constraint is omitted from the encoding;
 (iv)~the full core $\mathcal{A}^{r}=\mathcal{A}_t$ is reached;
-(v)~the solver is complete for the encoded model; and
+(v)~the solver is complete for the encoded model, and
 (vi)~the solver returns a conclusive status before its time limit.
 Then the repair stage returns a feasible assignment if and only if
 the registered hard model is feasible.
@@ -1776,7 +1776,7 @@ z_3^\star = \max_{\substack{x \in \mathcal{F}(\bm{s}_t) \\ H = z_1^\star \\ D = 
 \end{equation}
 where $H$ is the weighted reconfiguration distance, $D$ is the deviation from the decoded candidate $\hat{x}$, and $U_{\mathrm{int}}$ is the scaled static utility. 
 
-To comply with \cpsat's exact-integer requirements, continuous utility values and fractional weights are scaled by $10^4$ and rounded to integers. The total 100~ms solver time allocation is shared sequentially: each CP-SAT call receives the remaining solver budget $B_{k+1}=\max\{0,B_k-\tau_k\}$, rather than the original full budget. The implementation applies the objective levels sequentially. A subsequent level is optimized only after the preceding level has returned \texttt{OPTIMAL}; the certified optimum value is then imposed as an equality constraint. If a stage returns \texttt{FEASIBLE} because its budget expires, the incumbent may be accepted after independent verification, but neither that objective level nor the complete lexicographic sequence is considered optimal. Such outcomes are reported as feasible repairs without an objective-optimality certificate. For tie-breaking, the utility decoder selects the highest utility, then lowest action index. For solver-generated repairs, tied optima are considered equivalent and any tied solution may be returned.
+To comply with \cpsat's exact-integer requirements, continuous utility values and fractional weights are scaled by $10^4$ and rounded to integers. The total 100~ms solver time allocation is shared sequentially: each CP-SAT call receives the remaining solver budget $B_{k+1}=\max\{0,B_k-\tau_k\}$, rather than the original full budget. The implementation applies the objective levels sequentially. A subsequent level is optimized only after the preceding level has returned \texttt{OPTIMAL}, the certified optimum value is then imposed as an equality constraint. If a stage returns \texttt{FEASIBLE} because its budget expires, the incumbent may be accepted after independent verification, but neither that objective level nor the complete lexicographic sequence is considered optimal. Such outcomes are reported as feasible repairs without an objective-optimality certificate. For tie-breaking, the utility decoder selects the highest utility, then lowest action index. For solver-generated repairs, tied optima are considered equivalent and any tied solution may be returned.
 
 \begin{table*}[t]
 \centering
@@ -1817,7 +1817,7 @@ Linux host) affects neither instance identity nor search behaviour.
 
 The static campaign nevertheless did not control garbage collection,
 CPU affinity, or background system load, so its latency results
-include host-level timing variability; this affects measured
+include host-level timing variability, this affects measured
 durations only, never the generated instances or the solver search
 path. Warm-up runs were executed prior to measurement to initialize
 the runtime environment.
@@ -1900,7 +1900,7 @@ forward-checking candidate generators.
 
 The QoS-aware and bargaining baselines reproduce objective structures
 inspired by previous work
-\cite{wadud2024qacm,wadud2023game}; they are not reimplementations of
+\cite{wadud2024qacm,wadud2023game}, they are not reimplementations of
 the complete published systems.
 
 In the sequential suite, the incremental candidate is the previous
@@ -1995,12 +1995,12 @@ quantities do not coincide in general.
 The estimand and resampling unit differ by campaign:
 \begin{itemize}[leftmargin=1.4em]
 \item \textbf{Static comparisons:} the estimand is the median paired
-per-instance latency difference; the resampling unit is the
+per-instance latency difference, the resampling unit is the
 generated instance.
 \item \textbf{Sequential comparisons:} the primary estimand is the
 paired difference between episode-level median per-epoch latencies;
 the resampling unit is the episode.
-\item \textbf{KPM intervals:} the estimand is a marginal median; the
+\item \textbf{KPM intervals:} the estimand is a marginal median, the
 resampling unit is the decision. These intervals are descriptive.
 \end{itemize}
 
@@ -2293,7 +2293,7 @@ FEASIBLE-NOT-CERTIFIED denotes a verifier-accepted incumbent
 returned before full lexicographic certification. An episode is
 counted as LEX-OPTIMAL only if every repaired epoch in that episode
 achieved complete lexicographic certification. Counts are completed
-repair episodes, not internal solver calls; each sequence comprises
+repair episodes, not internal solver calls, each sequence comprises
 one or more core-feasibility calls followed by up to three
 objective-level optimizations.
 }
@@ -2317,7 +2317,7 @@ Sequential F5 subset & episode & 40 & 40 & 0 \\
 Paired static-instance comparisons. Latency effect sizes are
 matched-pairs rank-biserial correlations. HL denotes the
 Hodges--Lehmann paired difference in milliseconds. When $b+c=0$ no
-discordant pairs exist; the McNemar comparison is reported as
+discordant pairs exist, the McNemar comparison is reported as
 $p=1$ by convention and carries no evidence of superiority in either
 direction.
 }
@@ -2370,7 +2370,7 @@ deadline compliance to approximately 57\%, and left six or seven
 instances blocked, depending on the core rule. Its feasibility deficit relative to the discrete pipeline was statistically significant (exact McNemar $p=0.016$ unadjusted, $p_{\mathrm{Holm}}=0.031$). It was therefore
 excluded from the proposed operational pipeline.
 
-For the continuous-relaxation evaluations, the upstream end-to-end coordination feasibility sample size is strictly $N=250$. However, the downstream KPM-analysis sample is $N=249$ because one verifier-accepted decision failed during the post-verification KPM simulation stage due to a simulator numerical error. A post-verification simulator error does not constitute a failure of the upstream coordination pipeline. The failed simulation concerns a single S5 instance that was verifier-accepted under both \method and the continuous variants; the \cpsat KPM simulation on the same generated instance completed, so its marginal sample remains $n=250$, whereas the \method sample excludes that instance ($n=249$) and the explanation-guided continuous sample excludes it as well ($n=242$ of its 243 verifier-accepted decisions). Missing simulator values were omitted pairwise in computations using decisions as the resampling unit, and all KPM intervals are marginal decision-level bootstrap intervals rather than paired-sample intervals.
+For the continuous-relaxation evaluations, the upstream end-to-end coordination feasibility sample size is strictly $N=250$. However, the downstream KPM-analysis sample is $N=249$ because one verifier-accepted decision failed during the post-verification KPM simulation stage due to a simulator numerical error. A post-verification simulator error does not constitute a failure of the upstream coordination pipeline. The failed simulation concerns a single S5 instance that was verifier-accepted under both \method and the continuous variants, the \cpsat KPM simulation on the same generated instance completed, so its marginal sample remains $n=250$, whereas the \method sample excludes that instance ($n=249$) and the explanation-guided continuous sample excludes it as well ($n=242$ of its 243 verifier-accepted decisions). Missing simulator values were omitted pairwise in computations using decisions as the resampling unit, and all KPM intervals are marginal decision-level bootstrap intervals rather than paired-sample intervals.
 
 \subsection{Repair-core ablation}
 \label{sec:repair-ablation}
@@ -2457,13 +2457,13 @@ Full scope
 Explanation-guided expansion used a median final core of 11 variables,
 compared with 16 for radius two and 20 for full-scope solving.
 Full-scope repair required a median 1.78~ms, compared with 1.19~ms for
-explanation-guided repair. The latency advantage of explanation-guided repair over full-scope solving is statistically significant ($p=8.0\cdot 10^{-34}$, matched-pairs rank-biserial correlation $-0.89$; family F3 in Table~\ref{tab:families}). Its final cores are moderately but significantly larger than the fixed violated-scope and radius-zero cores (family F4: $p_{\mathrm{Holm}}=1.4\cdot 10^{-4}$), which is the price of the expansions that recovered the 21 cases lost by fixed-scope repair.
+explanation-guided repair. The latency advantage of explanation-guided repair over full-scope solving is statistically significant ($p=8.0\cdot 10^{-34}$, matched-pairs rank-biserial correlation $-0.89$, family F3 in Table~\ref{tab:families}). Its final cores are moderately but significantly larger than the fixed violated-scope and radius-zero cores (family F4: $p_{\mathrm{Holm}}=1.4\cdot 10^{-4}$), which is the price of the expansions that recovered the 21 cases lost by fixed-scope repair.
 
 \begin{figure}[t]
 \centering
 \includegraphics[
   width=\columnwidth
-]{artifacts/figures/fig_core_sizes.pdf}
+]{figures/fig_core_sizes.pdf}
 \caption{
 Final repair-core sizes across the 248 operational-candidate repairs.
 }
@@ -2472,7 +2472,7 @@ Final repair-core sizes across the 248 operational-candidate repairs.
 
 These results concern candidates produced by the deliberately
 conflict-unaware decoder. They demonstrate the effect of expansion
-relative to fixed-boundary repair; they do not show that 248 repairs
+relative to fixed-boundary repair, they do not show that 248 repairs
 would be required under a stronger operational decoder.
 
 \subsection{Objective quality}
@@ -2484,7 +2484,7 @@ Across the static scenario suite, explanation-guided repair retained
 optimization retained 64.6\%. The mean difference was therefore 10.8
 percentage points. The paired asymptotic Wilcoxon result was $p<10^{-35}$. Because 12.8\%
 of paired differences were zero out of the $N=250$ static instances, the effective
-non-zero sample was $N_{\mathrm{eff}}=218$; we used the asymptotic Wilcoxon signed-rank
+non-zero sample was $N_{\mathrm{eff}}=218$, we used the asymptotic Wilcoxon signed-rank
 test with \texttt{zero\_method='wilcox'}. The median paired gap was 11.2 percentage points (IQR: 6.8--14.5 percentage points) in favour of full optimization, with a matched-pairs rank-biserial correlation of $-0.92$. The gap did not exceed 40 percentage points.
 Median latency was 1.25~ms for local repair and 2.21~ms for the full
 objective optimizer. This 1.25~ms figure is not directly comparable
@@ -2645,7 +2645,7 @@ verification or audit trace.
 \centering
 \includegraphics[
   width=\columnwidth
-]{artifacts/figures/fig_coldstart.pdf}
+]{figures/fig_coldstart.pdf}
 \caption{
 Cold-start latency on generated near-threshold instances. Lines show
 medians and shaded regions extend to the pooled p95 over twenty seeds
@@ -2721,7 +2721,7 @@ this baseline).
 \centering
 \includegraphics[
   width=\columnwidth
-]{artifacts/figures/fig_amortized.pdf}
+]{figures/fig_amortized.pdf}
 \caption{
 Per-epoch latency when 2\% of the relations change between epochs.
 Lines show pooled medians and shaded regions extend to the pooled p95.
@@ -2736,7 +2736,7 @@ guarantee.
 \centering
 \caption{
 Per-epoch latency over ten paired episodes of thirty epochs. Entries
-are pooled median and p95 in milliseconds; the value after the
+are pooled median and p95 in milliseconds, the value after the
 semicolon for incremental repair is the pooled p99. All strategies
 reached 100\% verified feasibility. Because epochs within an episode
 are dependent and only 300 epochs are available per configuration,
@@ -2758,39 +2758,39 @@ Incremental repair\\
 2\% / 100
 & 2.8 (4.8)
 & 2.9 (5.2)
-& \textbf{0.05} (1.8; 4.4)\\
+& \textbf{0.05} (1.8, 4.4)\\
 
 2\% / 300
 & 8.2 (11.4)
 & 8.7 (11.8)
-& \textbf{1.4} (5.0; 13.2)\\
+& \textbf{1.4} (5.0, 13.2)\\
 
 2\% / 600
 & 15.2 (19.5)
 & 16.3 (20.7)
-& \textbf{2.7} (10.9; 22.7)\\
+& \textbf{2.7} (10.9, 22.7)\\
 
 2\% / 1000
 & 25.6 (31.2)
 & 27.4 (32.8)
-& \textbf{4.9} (30.6; 83.7)\\
+& \textbf{4.9} (30.6, 83.7)\\
 
 10\% / 1000
 & 18.3 (27.1)
 & 20.2 (28.6)
-& \textbf{4.5} (59.6; 137.8)\\
+& \textbf{4.5} (59.6, 137.8)\\
 
 \midrule
 
 Drift / 600
 & 17.8 (20.9)
 & 18.9 (22.0)
-& \textbf{4.0} (25.8; 69.3)\\
+& \textbf{4.0} (25.8, 69.3)\\
 
 Drift / 1000
 & 28.1 (32.5)
 & 29.8 (34.2)
-& \textbf{9.8} (43.8; 81.3)\\
+& \textbf{9.8} (43.8, 81.3)\\
 
 \bottomrule
 \end{tabular}
@@ -2805,7 +2805,7 @@ incremental-repair latency was 129~ms. At $\delta=10\%$, the pooled
 incremental-repair p95 increased to approximately 60~ms.
 
 These observations suggest that core growth can remove the median
-advantage on difficult epochs; the small number of extreme
+advantage on difficult epochs, the small number of extreme
 observations underlying the pooled p99 is discussed in
 Section~\ref{sec:limitations}.
 
@@ -2843,7 +2843,7 @@ deployed O-RAN system.
 Descriptive KPMs of verifier-accepted decisions, presented as preliminary diagnostic evidence, reported as mean and
 bootstrap 95\% interval. Energy is measured in $\mu$J/bit. The
 continuous-repair sample contains 242 verified decisions. One S5
-\method KPM evaluation failed numerically after verification; the
+\method KPM evaluation failed numerically after verification, the
 \cpsat KPM for that instance remained available. The raw
 uncoordinated proposal had a counterfactual mean throughput of
 11.7~Mbps, but no uncoordinated proposal was accepted for execution.
@@ -2900,7 +2900,7 @@ Consequently, Table~\ref{tab:kpi} supports only a descriptive
 comparison.
 
 The principal experimentally supported distinction is registered-model
-feasibility, not KPM superiority; the additional evidence needed for
+feasibility, not KPM superiority, the additional evidence needed for
 KPM equivalence claims is stated in Section~\ref{sec:limitations}.
 
 % ============================================================
@@ -2909,7 +2909,7 @@ KPM equivalence claims is stated in Section~\ref{sec:limitations}.
 % ============================================================
 
 This section is the single authoritative statement of the validity
-caveats of this study; earlier sections refer here rather than
+caveats of this study, earlier sections refer here rather than
 restating them.
 
 \subsection{Registered-model validity}
@@ -2924,7 +2924,7 @@ This limitation is particularly important for implicit conflicts,
 whose representation depends on the quality of a parameter--KPM
 model, validated profile, digital twin, simulator, or conservative
 operator rule. The independent verifier checks consistency with the
-registered representation; it does not validate the representation
+registered representation, it does not validate the representation
 against physical reality.
 
 Model-version binding is also required to prevent a
@@ -3079,7 +3079,7 @@ validation on an O-RAN emulator or experimental platform is required.
 \label{sec:conclusion}
 % ============================================================
 
-This paper formulated registered multi-xApp arbitration in the Near-RT RIC as a dynamic finite-domain constraint problem and presented \method, a pipeline whose core contribution is an independently validated forwarding verifier with replayable audit certificates, supported upstream by incremental generalized arc consistency and explanation-guided repair. The stated formal properties---soundness of the forwarding gate relative to the registered model, solution preservation under filtering, and conditional completeness of expanding repair cores---are standard, but they delimit precisely what the architecture does and does not guarantee.
+This paper formulated registered multi-xApp arbitration in the Near-RT RIC as a dynamic finite-domain constraint problem and presented \method, a pipeline whose core contribution is an independently validated forwarding verifier with replayable audit certificates, supported upstream by incremental generalized arc consistency and explanation-guided repair. The stated formal properties - soundness of the forwarding gate relative to the registered model, solution preservation under filtering, and conditional completeness of expanding repair cores - are standard, but they delimit precisely what the architecture does and does not guarantee.
 
 The production verifier showed zero divergence over 680{,}450 checks against multiple independent implementations and oracles, providing substantial implementation-level agreement on the tested generated inputs. On 250 generated static instances in a single-worker deterministic environment (num\_search\_workers = 1), \method reached a median computational latency of 1.8~ms. Thus, \method outperformed the evaluated Python rebuild-and-resolve \cpsat implementations on the generated sequential workloads. The operational pipeline repaired all 248 utility-decoder candidates. Across these repairs, explanation-guided expansion used markedly smaller cores than full-scope solving and succeeded on 21 candidates where fixed-scope repair failed. Stronger conflict-aware candidate generators substantially reduced the need for repair altogether.
 
